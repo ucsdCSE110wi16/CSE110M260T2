@@ -2,13 +2,17 @@ package com.example.han.googleinterface;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -21,6 +25,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -49,11 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * This is where we can add markers or lines, add listeners or move the camera..
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -109,6 +112,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
                 .title("You are here!"));
+    }
+
+    /**
+     * Function name: onSearch(View view)
+     * Description: Search for the user input address in the google maps
+     */
+    public void onSearch(View view){
+
+        // Get user input location text, and convert to string
+        EditText location_tf = (EditText)findViewById(R.id.TFaddress);
+        String location = location_tf.getText().toString();
+
+        // Store the list of address
+        List<Address> addressList = null;
+
+        // Check whether user input location is valid
+        if(location != null || !location.equals("")) {
+
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                addressList = geocoder.getFromLocationName(location, 1);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Store the latitude and longitude of user input address
+            Address address = addressList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+
+            // Add a maker on the user input address
+            mMap.addMarker(new MarkerOptions().position(latLng).title("I want to go there!"));
+
+            // Move camera to that found address
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
     }
 
     @Override
