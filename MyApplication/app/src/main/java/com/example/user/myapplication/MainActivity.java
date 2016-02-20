@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
         imageButton1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(context, MTSActivity.class);
+                Intent intent = new Intent(context, UCSDActivity.class);
                 startActivity(intent);
+                Global g = (Global)getApplication();
+                g.setData_bus_kind("MTS");
             }
         });
 
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View arg0) {
                 Intent intent = new Intent(context, UCSDActivity.class);
                 startActivity(intent);
+                Global g = (Global)getApplication();
+                g.setData_bus_kind("UCSD");
             }
         });
     }

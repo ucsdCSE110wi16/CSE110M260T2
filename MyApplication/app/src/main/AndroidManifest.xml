@@ -3,6 +3,7 @@
     package="com.example.user.myapplication">
 
     <application
+        android:name=".Global"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -26,11 +27,11 @@
         </activity>
         <activity
             android:label="@string/app_name"
-            android:name=".MTSActivity" >
+            android:name=".UCSDActivity" >
         </activity>
         <activity
             android:label="@string/app_name"
-            android:name=".UCSDActivity" >
+            android:name=".MAPActivity" >
         </activity>
     </application>
 
