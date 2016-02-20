@@ -1,30 +1,31 @@
 package com.example.user.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity {
+public class UCSDActivity extends Activity {
 
-    ImageButton imageButton1,imageButton2;
+    Button auto_button,enter_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        addListenerOnButton();
+        setContentView(R.layout.ucsd_ask);
+
+
     }
 
     public void addListenerOnButton() {
         final Context context = this;
-        imageButton1 = (ImageButton) findViewById(R.id.imageButton);
-        imageButton2 = (ImageButton) findViewById(R.id.imageButton2);
+        auto_button = (Button) findViewById(R.id.auto_ucsd);
+        enter_button = (Button) findViewById(R.id.enter_ucsd);
 
-        imageButton1.setOnClickListener(new OnClickListener() {
+        auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 Intent intent = new Intent(context, MTSActivity.class);
@@ -32,9 +33,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imageButton2.setOnClickListener(new OnClickListener() {
+        enter_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                EditText bus_number = (EditText) findViewById(R.id.textView4);
                 Intent intent = new Intent(context, UCSDActivity.class);
                 startActivity(intent);
             }

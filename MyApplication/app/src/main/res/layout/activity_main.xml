@@ -16,7 +16,8 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/mts" />
+        android:src="@drawable/mts"
+        android:contentDescription="@string/MTS_image_button" />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -25,13 +26,14 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ucsd" />
+        android:src="@drawable/ucsd"
+        android:contentDescription="@string/ucsd_image_button" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose the transportation method:"
-        android:id="@+id/textView"
+        android:text="@string/MainTitle_string"
+        android:id="@+id/MainTitle"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

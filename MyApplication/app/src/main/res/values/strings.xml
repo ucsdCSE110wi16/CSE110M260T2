@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="MainTitle_string">Choose the transportation method:</string>
+    <string name="ucsd_image_button">ucsd image button</string>
+    <string name="MTS_image_button">MTS image button</string>
+    <string name="UCSD_title">UCSD</string>
+    <string name="ask_string">Choose your tracking method:</string>
+    <string name="Enter_bus_stop">Enter Bus stop</string>
+    <string name="Auto_bus_stop">Find Nearest bus stop</string>
+    <string name="or">OR</string>
 </resources>
