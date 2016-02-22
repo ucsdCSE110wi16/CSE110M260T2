@@ -1,15 +1,17 @@
 package com.example.user.myapplication;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class UCSDActivity extends Activity {
+public class LocationActivity extends AppCompatActivity {
 
     Button auto_button,enter_button;
     TextView bus_type = null;
@@ -17,7 +19,7 @@ public class UCSDActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ucsd_ask);
+        setContentView(R.layout.location_ask);
         addListenerOnButton();
 
         Global g = (Global)getApplication();
@@ -26,11 +28,15 @@ public class UCSDActivity extends Activity {
             String text= "MTS";
             TextView title = (TextView)findViewById(R.id.ask_bus_type);
             title.setText(text);
+            ImageView img= (ImageView) findViewById(R.id.location_choice);
+            img.setImageResource(R.drawable.mts);
         }
         else{
             String text= "UCSD";
             TextView title = (TextView)findViewById(R.id.ask_bus_type);
             title.setText(text);
+            ImageView img= (ImageView) findViewById(R.id.location_choice);
+            img.setImageResource(R.drawable.ucsd);
         }
 
     }
@@ -43,7 +49,7 @@ public class UCSDActivity extends Activity {
         auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(context, MAPActivity.class);
+                Intent intent = new Intent(context, WalkActivity.class);
                 startActivity(intent);
                 Global g = (Global)getApplication();
                 g.setData_method("auto");
@@ -56,7 +62,12 @@ public class UCSDActivity extends Activity {
                 EditText bus_number = (EditText) findViewById(R.id.UCSD_bus_stop);
                 String ucsd_bus_num = bus_number.getText().toString();
 
-                Intent intent = new Intent(context, MAPActivity.class);
+                if (ucsd_bus_num.matches("")) {
+                    Toast.makeText(LocationActivity.this, "You did not enter an address.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent intent = new Intent(context, WalkActivity.class);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("UCSD_BUS_NUM", ucsd_bus_num);

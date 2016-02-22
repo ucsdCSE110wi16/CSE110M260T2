@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.user.myapplication.MainActivity">
+    tools:context="com.example.user.myapplication.MainActivity"
+    android:id="@+id/map_layout">
 
     <LinearLayout
         android:orientation="vertical"
@@ -27,52 +28,56 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ask_string"
-            android:id="@+id/textView3"
+            android:text="@string/walk_ask"
+            android:id="@+id/walk_ask"
             android:layout_gravity="center_horizontal" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.59">
+            android:layout_weight="1.00">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/speed"
+                android:src="@drawable/speed"
+                android:contentDescription="@string/speed_img"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/seekBar"
+                android:layout_below="@+id/speed"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Enter_bus_stop"
-                android:id="@+id/enter_ucsd"
-                android:layout_alignParentBottom="true"
+                android:text="@string/submit"
+                android:id="@+id/submit_speed"
+                android:layout_below="@+id/seekBar"
                 android:layout_centerHorizontal="true" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Auto_bus_stop"
-                android:id="@+id/auto_ucsd"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/UCSD_bus_stop"
-                android:layout_above="@+id/enter_ucsd"
-                android:layout_alignLeft="@+id/auto_ucsd"
-                android:layout_alignStart="@+id/auto_ucsd"
-                android:layout_alignRight="@+id/auto_ucsd"
-                android:layout_alignEnd="@+id/auto_ucsd" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/or"
-                android:id="@+id/textView4"
-                android:layout_below="@+id/auto_ucsd"
-                android:layout_centerHorizontal="true"
-                android:textSize="30sp" />
         </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="129dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/location_choice"
+                android:layout_gravity="center"
+                android:contentDescription="@string/location" />
+        </FrameLayout>
 
     </LinearLayout>
 
