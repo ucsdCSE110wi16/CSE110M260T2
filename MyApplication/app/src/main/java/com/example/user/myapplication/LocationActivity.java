@@ -12,6 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class LocationActivity extends AppCompatActivity {
+    //google maps key
+    //AIzaSyCPM4jHENVWYtUmQ4lxQarUr7_QLWSbHw4
+
+    //choose location based on current or address
 
     Button auto_button,enter_button;
     TextView bus_type = null;

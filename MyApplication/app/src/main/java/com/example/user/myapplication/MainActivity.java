@@ -10,6 +10,9 @@ import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
+    //main activity after splash
+    //choose mts or UCSD
+
     ImageButton imageButton1,imageButton2;
 
     @Override
