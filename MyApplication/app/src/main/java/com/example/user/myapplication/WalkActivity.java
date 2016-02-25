@@ -15,7 +15,6 @@ import android.widget.TextView;
 public class WalkActivity extends AppCompatActivity {
 
     //choose walk speed
-    TextView bus_num_ucsd = null;
     Button spd=null;
     Intent intent;
     private TextView speedText;
