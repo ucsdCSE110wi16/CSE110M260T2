@@ -1,4 +1,4 @@
-package com.example.user.myapplication;
+package com.sd_commute;
 
 import android.content.Context;
 import android.content.Intent;
