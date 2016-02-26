@@ -15,6 +15,7 @@
     <string name="speed_img">speed_img</string>
     <string name="submit">Submit</string>
     <string name="title_activity_maps">Map</string>
+    <string name="searchButText">Search</string>
 
     <string name="google_app_id">1008155422772</string>
 </resources>

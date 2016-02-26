@@ -49,6 +49,9 @@ public class MapsActivity extends FragmentActivity implements
 
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+
+
         Global g = (Global) getApplication();
         if (g.getData_method().equals("auto")) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -70,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements
 
 
     private void setUpMap() {
-
+        mMap.setMyLocationEnabled(true);
 /*
         String line=null;
         String lat=null, lon=null, code=null,name=null;
@@ -203,12 +206,7 @@ public class MapsActivity extends FragmentActivity implements
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("YOU ARE HERE");
 
-
-        mMap.addMarker(options);
 
 
     }
