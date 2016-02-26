@@ -11,6 +11,8 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Android : ", "APP STARTED SUCCESSFULLY WOOOO!!!");
+        UCSDBus bus = new UCSDBus();
+        bus.execute("");
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
