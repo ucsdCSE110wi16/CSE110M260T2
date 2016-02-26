@@ -2,10 +2,13 @@ package com.example.user.myapplication;
 
 import android.content.IntentSender;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -27,14 +30,18 @@ public class MapsActivity extends FragmentActivity implements
         LocationListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GoogleApiClient mGoogleApiClient=null; //Google API client for location
+    private GoogleApiClient mGoogleApiClient = null; //Google API client for location
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
 
 
-
     String result;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +49,8 @@ public class MapsActivity extends FragmentActivity implements
 
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-        Global g=(Global)getApplication();
-        if(g.getData_method().equals("auto")) {
+        Global g = (Global) getApplication();
+        if (g.getData_method().equals("auto")) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -56,6 +63,9 @@ public class MapsActivity extends FragmentActivity implements
                     .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                     .setFastestInterval(1 * 1000); // 1 second, in milliseconds
         }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -128,12 +138,13 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        Global g=(Global)getApplication();
-        if(mGoogleApiClient!=null) {
+        Global g = (Global) getApplication();
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
 
@@ -149,8 +160,6 @@ public class MapsActivity extends FragmentActivity implements
     }
 
 
-
-
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Location services connected.");
@@ -158,10 +167,10 @@ public class MapsActivity extends FragmentActivity implements
 
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-        else {
+        } else {
             handleNewLocation(location);
-        };
+        }
+        ;
     }
 
     @Override
@@ -199,9 +208,48 @@ public class MapsActivity extends FragmentActivity implements
                 .title("YOU ARE HERE");
 
 
-
         mMap.addMarker(options);
 
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Maps Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.user.myapplication/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Maps Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.user.myapplication/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }

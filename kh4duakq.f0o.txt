@@ -1,0 +1,92 @@
+﻿Merge remote-tracking branch 'origin/master'
+
+# Conflicts:
+#	MyApplication/app/src/main/java/com/example/user/myapplication/WalkActivity.java
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 1 and 4 different commits each, respectively.
+#   (use "git pull" to merge the remote branch into yours)
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   Documents/TimeLine.xlsx
+#	modified:   MyApplication/.idea/encodings.xml
+#	modified:   MyApplication/.idea/gradle.xml
+#	deleted:    MyApplication/.idea/inspectionProfiles/Project_Default.xml
+#	deleted:    MyApplication/.idea/inspectionProfiles/profiles_settings.xml
+#	modified:   MyApplication/.idea/misc.xml
+#	modified:   MyApplication/.idea/vcs.xml
+#	modified:   MyApplication/app/build.gradle
+#	new file:   MyApplication/app/src/debug/res/values/google_maps_api.xml
+#	modified:   MyApplication/app/src/main/AndroidManifest.xml
+#	modified:   MyApplication/app/src/main/java/com/example/user/myapplication/LocationActivity.java
+#	modified:   MyApplication/app/src/main/java/com/example/user/myapplication/MainActivity.java
+#	new file:   MyApplication/app/src/main/java/com/example/user/myapplication/MapsActivity.java
+#	modified:   MyApplication/app/src/main/java/com/example/user/myapplication/WalkActivity.java
+#	new file:   MyApplication/app/src/main/res/layout/activity_maps.xml
+#	modified:   MyApplication/app/src/main/res/values/strings.xml
+#	new file:   MyApplication/app/src/release/res/values/google_maps_api.xml
+#	new file:   sd-commute/.gitattributes
+#	new file:   sd-commute/.gitignore
+#	new file:   sd-commute/.idea/.name
+#	new file:   sd-commute/.idea/compiler.xml
+#	new file:   sd-commute/.idea/copyright/profiles_settings.xml
+#	new file:   sd-commute/.idea/encodings.xml
+#	new file:   sd-commute/.idea/gradle.xml
+#	new file:   sd-commute/.idea/misc.xml
+#	new file:   sd-commute/.idea/modules.xml
+#	renamed:    MyApplication/.idea/runConfigurations.xml -> sd-commute/.idea/runConfigurations.xml
+#	new file:   sd-commute/.idea/vcs.xml
+#	new file:   sd-commute/app/.gitignore
+#	new file:   sd-commute/app/build.gradle
+#	new file:   sd-commute/app/proguard-rules.pro
+#	new file:   sd-commute/app/src/main/AndroidManifest.xml
+#	new file:   sd-commute/app/src/main/ic_launcher-web.png
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/Global.java
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/LocationActivity.java
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/MainActivity.java
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/MapsActivity.java
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/SplashScreen.java
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/UCSDBus.java
+#	new file:   sd-commute/app/src/main/java/com/sd_commute/WalkActivity.java
+#	new file:   sd-commute/app/src/main/res/drawable/icon.png
+#	new file:   sd-commute/app/src/main/res/drawable/location.png
+#	new file:   sd-commute/app/src/main/res/drawable/mts.png
+#	new file:   sd-commute/app/src/main/res/drawable/speed.jpg
+#	new file:   sd-commute/app/src/main/res/drawable/splash_image.jpg
+#	new file:   sd-commute/app/src/main/res/drawable/ucsd.png
+#	new file:   sd-commute/app/src/main/res/layout/activity_main.xml
+#	new file:   sd-commute/app/src/main/res/layout/activity_maps.xml
+#	new file:   sd-commute/app/src/main/res/layout/google_map_layout.xml
+#	new file:   sd-commute/app/src/main/res/layout/location_ask.xml
+#	new file:   sd-commute/app/src/main/res/layout/walk_ask.xml
+#	new file:   sd-commute/app/src/main/res/mipmap-hdpi/ic_launcher.png
+#	new file:   sd-commute/app/src/main/res/mipmap-mdpi/ic_launcher.png
+#	new file:   sd-commute/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+#	new file:   sd-commute/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+#	new file:   sd-commute/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+#	new file:   sd-commute/app/src/main/res/values-w820dp/dimens.xml
+#	new file:   sd-commute/app/src/main/res/values/colors.xml
+#	new file:   sd-commute/app/src/main/res/values/dimens.xml
+#	new file:   sd-commute/app/src/main/res/values/strings.xml
+#	new file:   sd-commute/app/src/main/res/values/styles.xml
+#	new file:   sd-commute/app/src/release/res/values/google_maps_api.xml
+#	new file:   sd-commute/build.gradle
+#	new file:   sd-commute/gradle.properties
+#	new file:   sd-commute/gradle/wrapper/gradle-wrapper.jar
+#	new file:   sd-commute/gradle/wrapper/gradle-wrapper.properties
+#	new file:   sd-commute/gradlew
+#	new file:   sd-commute/gradlew.bat
+#	new file:   sd-commute/settings.gradle
+#
+
