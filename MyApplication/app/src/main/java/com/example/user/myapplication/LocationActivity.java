@@ -80,7 +80,7 @@ public class LocationActivity extends AppCompatActivity {
 
                 startActivity(intent);
                 Global g = (Global) getApplication();
-                g.setData_method("bus_stop");
+                g.setData_method("address");
             }
         });
     }

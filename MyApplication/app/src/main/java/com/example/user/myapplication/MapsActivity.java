@@ -1,11 +1,15 @@
 package com.example.user.myapplication;
 
 import android.content.IntentSender;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -14,15 +18,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -35,7 +35,6 @@ public class MapsActivity extends FragmentActivity implements
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
 
-
     String result;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -45,6 +44,13 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Bundle extras = getIntent().getExtras();
+        String value;
+        if (extras != null) {
+            value = extras.getString("UCSD_BUS_NUM");
+        }
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
@@ -73,7 +79,35 @@ public class MapsActivity extends FragmentActivity implements
 
 
     private void setUpMap() {
-        mMap.setMyLocationEnabled(true);
+
+        Global g = (Global)getApplication();
+
+        if(g.getData_method()=="auto") {
+            mMap.setMyLocationEnabled(true);
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            // Create a criteria object to retrieve provider
+            Criteria criteria = new Criteria();
+            // Get the name of the best provider
+            String provider = locationManager.getBestProvider(criteria, true);
+            // Get Current Location
+            Location myLocation = locationManager.getLastKnownLocation(provider);
+            //set map type
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            // Get latitude of the current location
+            double latitude = myLocation.getLatitude();
+            // Get longitude of the current location
+            double longitude = myLocation.getLongitude();
+            // Create a LatLng object for the current location
+            LatLng latLng = new LatLng(latitude, longitude);
+            // Show the current location in Google Map
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            // Zoom in the Google Map
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
+        }
+        else if(g.getData_method()=="address") {
+
+        }
 /*
         String line=null;
         String lat=null, lon=null, code=null,name=null;
@@ -173,7 +207,6 @@ public class MapsActivity extends FragmentActivity implements
         } else {
             handleNewLocation(location);
         }
-        ;
     }
 
     @Override
