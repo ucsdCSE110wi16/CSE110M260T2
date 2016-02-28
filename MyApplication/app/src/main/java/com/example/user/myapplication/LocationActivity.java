@@ -63,22 +63,23 @@ public class LocationActivity extends AppCompatActivity {
         enter_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                EditText bus_number = (EditText) findViewById(R.id.UCSD_bus_stop);
-                String ucsd_bus_num = bus_number.getText().toString();
+                EditText address = (EditText) findViewById(R.id.Address);
+                String address_enter = address.getText().toString();
 
-                if (ucsd_bus_num.matches("")) {
+                if (address_enter.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an address.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+
                 Intent intent = new Intent(context, WalkActivity.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("UCSD_BUS_NUM", ucsd_bus_num);
+                bundle.putString("UCSD_BUS_NUM", address_enter);
                 intent.putExtras(bundle);
 
                 startActivity(intent);
-                Global g = (Global)getApplication();
+                Global g = (Global) getApplication();
                 g.setData_method("bus_stop");
             }
         });
