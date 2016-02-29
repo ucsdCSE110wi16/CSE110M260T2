@@ -1,15 +1,16 @@
 package com.example.user.myapplication;
 
 import android.content.IntentSender;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -24,6 +25,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -34,6 +38,8 @@ public class MapsActivity extends FragmentActivity implements
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
+    String value;
+    List<Address> list;
 
     String result;
     /**
@@ -44,13 +50,6 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Bundle extras = getIntent().getExtras();
-        String value;
-        if (extras != null) {
-            value = extras.getString("UCSD_BUS_NUM");
-        }
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
@@ -78,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements
     }
 
 
-    private void setUpMap() {
+    private void setUpMap(){
 
         Global g = (Global)getApplication();
 
@@ -103,10 +102,47 @@ public class MapsActivity extends FragmentActivity implements
             // Show the current location in Google Map
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             // Zoom in the Google Map
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
         else if(g.getData_method()=="address") {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                value = extras.getString("address_entered");
+            }
+            Geocoder gc = new Geocoder(this);
 
+            if(value == null){
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+            }
+            else {
+                try {
+                    list = gc.getFromLocationName(value, 1);
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                if(list.isEmpty()){
+                    Toast.makeText(this, "Location not found.", Toast.LENGTH_SHORT).show();
+                    this.finish();
+                }
+                else{
+                    Address add = list.get(0);
+                    double latitude = add.getLatitude();
+                    double longitude = add.getLongitude();
+
+                    String address_line = add.getAddressLine(0);
+
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .draggable(true)
+                            .title(address_line));
+                }
+            }
         }
 /*
         String line=null;
@@ -190,7 +226,10 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient == null) {
+            return;
+        }
+        else if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -215,7 +254,7 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location){
         handleNewLocation(location);
     }
 

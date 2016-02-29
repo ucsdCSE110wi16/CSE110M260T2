@@ -41,22 +41,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Auto_bus_stop"
                 android:id="@+id/auto_ucsd"
-                android:layout_marginBottom="43dp"
-                android:layout_above="@+id/textView4"
+                android:layout_alignParentBottom="true"
                 android:layout_alignRight="@+id/enter_ucsd"
                 android:layout_alignEnd="@+id/enter_ucsd" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:id="@+id/Address"
-                android:layout_above="@+id/enter_ucsd"
+                android:inputType="text"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:inputType="text" />
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -75,7 +74,8 @@
                 android:layout_alignEnd="@+id/Address"
                 android:layout_alignLeft="@+id/Address"
                 android:layout_alignStart="@+id/Address"
-                android:layout_above="@+id/Address" />
+                android:layout_above="@+id/Address"
+                android:id="@+id/space2" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
                 android:text="@string/Enter_bus_stop"
                 android:id="@+id/enter_ucsd"
                 android:layout_gravity="center_horizontal"
-                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/Address"
                 android:layout_centerHorizontal="true" />
 
             <ImageView

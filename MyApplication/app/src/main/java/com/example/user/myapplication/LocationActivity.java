@@ -4,7 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,7 +22,7 @@ public class LocationActivity extends AppCompatActivity {
     //choose location based on current or address
 
     Button auto_button,enter_button;
-    TextView bus_type = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,20 @@ public class LocationActivity extends AppCompatActivity {
             img.setImageResource(R.drawable.ucsd);
         }
 
+        final EditText editText= (EditText) findViewById(R.id.Address);
+        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId,
+                                          KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                        || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                }
+                return false;
+            }
+        });
     }
 
     public void addListenerOnButton() {
@@ -53,7 +71,7 @@ public class LocationActivity extends AppCompatActivity {
         auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(context, WalkActivity.class);
+                Intent intent = new Intent(context, MapsActivity.class);
                 startActivity(intent);
                 Global g = (Global)getApplication();
                 g.setData_method("auto");
@@ -63,7 +81,8 @@ public class LocationActivity extends AppCompatActivity {
         enter_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                EditText address = (EditText) findViewById(R.id.Address);
+                AutoCompleteTextView address = (AutoCompleteTextView) findViewById(R.id.Address);
+
                 String address_enter = address.getText().toString();
 
                 if (address_enter.matches("")) {
@@ -71,11 +90,10 @@ public class LocationActivity extends AppCompatActivity {
                     return;
                 }
 
-
-                Intent intent = new Intent(context, WalkActivity.class);
+                Intent intent = new Intent(context, MapsActivity.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("UCSD_BUS_NUM", address_enter);
+                bundle.putString("address_entered", address_enter);
                 intent.putExtras(bundle);
 
                 startActivity(intent);
