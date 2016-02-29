@@ -8,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -81,7 +80,7 @@ public class LocationActivity extends AppCompatActivity {
         enter_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                AutoCompleteTextView address = (AutoCompleteTextView) findViewById(R.id.Address);
+                EditText address = (EditText) findViewById(R.id.Address);
 
                 String address_enter = address.getText().toString();
 
