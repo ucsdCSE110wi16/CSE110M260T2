@@ -1,11 +1,16 @@
 package com.example.user.myapplication;
 
 import android.content.IntentSender;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -14,15 +19,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -34,7 +38,8 @@ public class MapsActivity extends FragmentActivity implements
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
-
+    String value;
+    List<Address> list;
 
     String result;
     /**
@@ -72,8 +77,73 @@ public class MapsActivity extends FragmentActivity implements
     }
 
 
-    private void setUpMap() {
-        mMap.setMyLocationEnabled(true);
+    private void setUpMap(){
+
+        Global g = (Global)getApplication();
+
+        if(g.getData_method()=="auto") {
+            mMap.setMyLocationEnabled(true);
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            // Create a criteria object to retrieve provider
+            Criteria criteria = new Criteria();
+            // Get the name of the best provider
+            String provider = locationManager.getBestProvider(criteria, true);
+            // Get Current Location
+            Location myLocation = locationManager.getLastKnownLocation(provider);
+            //set map type
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            // Get latitude of the current location
+            double latitude = myLocation.getLatitude();
+            // Get longitude of the current location
+            double longitude = myLocation.getLongitude();
+            // Create a LatLng object for the current location
+            LatLng latLng = new LatLng(latitude, longitude);
+            // Show the current location in Google Map
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            // Zoom in the Google Map
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        }
+        else if(g.getData_method()=="address") {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                value = extras.getString("address_entered");
+            }
+            Geocoder gc = new Geocoder(this);
+
+            if(value == null){
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+            }
+            else {
+                try {
+                    list = gc.getFromLocationName(value, 1);
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                if(list.isEmpty()){
+                    Toast.makeText(this, "Location not found.", Toast.LENGTH_SHORT).show();
+                    this.finish();
+                }
+                else{
+                    Address add = list.get(0);
+                    double latitude = add.getLatitude();
+                    double longitude = add.getLongitude();
+
+                    String address_line = add.getAddressLine(0);
+
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .draggable(true)
+                            .title(address_line));
+                }
+            }
+        }
 /*
         String line=null;
         String lat=null, lon=null, code=null,name=null;
@@ -156,7 +226,10 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient == null) {
+            return;
+        }
+        else if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -173,7 +246,6 @@ public class MapsActivity extends FragmentActivity implements
         } else {
             handleNewLocation(location);
         }
-        ;
     }
 
     @Override
@@ -182,7 +254,7 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location){
         handleNewLocation(location);
     }
 

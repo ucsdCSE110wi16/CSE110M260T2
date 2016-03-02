@@ -13,9 +13,10 @@
     <string name="location">location</string>
     <string name="walk_ask">Choose your walking speed:</string>
     <string name="speed_img">speed_img</string>
-    <string name="submit">Submit</string>
+    <string name="submit">Next</string>
     <string name="title_activity_maps">Map</string>
     <string name="searchButText">Search</string>
 
     <string name="google_app_id">1008155422772</string>
+    <string name="pin">pin</string>
 </resources>
