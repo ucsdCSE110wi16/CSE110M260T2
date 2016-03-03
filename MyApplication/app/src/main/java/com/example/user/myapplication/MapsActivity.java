@@ -56,7 +56,6 @@ public class MapsActivity extends FragmentActivity implements
         setUpMapIfNeeded();
 
 
-
         Global g = (Global) getApplication();
         if (g.getData_method().equals("auto")) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -76,7 +75,62 @@ public class MapsActivity extends FragmentActivity implements
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p/>
+     * This should only be called once and when we are sure that {@link #mMap} is not null.
+     */
+    // ***************************************************************************
+    // This is the code that reads stopfilter file to put markers on all the bus stops.
+    // Code by: Eric
+    // File for static MTS bus stops and times listed in stop_filter under documents folder.
+    // ****************************************************************************
+    /*
+    //*******************************************************************************
+    private void setUpMap() {
+        String line=null;
+        String lat=null, lon=null, code=null,name=null;
+        double latNum=0,lonNum=0;
+        int index=0, last=0;
+        InputStream ins = getResources().openRawResource(
+                getResources().getIdentifier("stops_filter",
+                        "raw", getPackageName()));
 
+        InputStreamReader inputReader = new InputStreamReader(ins);
+        BufferedReader bRead = new BufferedReader(inputReader);
+        try {
+            while (( line = bRead.readLine()) != null) {
+                last=line.indexOf(",");
+                lat=line.substring(0, last);
+
+                index=last;
+                last=line.indexOf(",", index + 1);
+                lon=line.substring(index+1, last);
+
+                index=last;
+                last=line.indexOf(",", index + 1);
+                code=line.substring(index+1, last);
+
+                index=last;
+                name=line.substring(index+1, line.length());
+
+                latNum=Double.parseDouble(lat);
+                lonNum=Double.parseDouble(lon);
+
+
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latNum,lonNum ))
+                        .title(name)
+                        .snippet(code));
+            }
+        } catch (IOException e) {
+
+        }
+
+    }
+*/
+    //******************************************************************
     private void setUpMap(){
 
         Global g = (Global)getApplication();
