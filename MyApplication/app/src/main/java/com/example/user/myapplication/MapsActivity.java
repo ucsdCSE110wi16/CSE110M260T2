@@ -144,58 +144,6 @@ public class MapsActivity extends FragmentActivity implements
                 }
             }
         }
-/*
-        String line=null;
-        String lat=null, lon=null, code=null,name=null;
-        double latNum=0,lonNum=0;
-        int index=0, last=0;
-        InputStream ins = getResources().openRawResource(
-                getResources().getIdentifier("stops_filter",
-                        "raw", getPackageName()));
-
-        InputStreamReader inputReader = new InputStreamReader(ins);
-        BufferedReader bRead = new BufferedReader(inputReader);
-        try {
-            while (( line = bRead.readLine()) != null) {
-                last=line.indexOf(",");
-                lat=line.substring(0, last);
-
-                index=last;
-                last=line.indexOf(",", index + 1);
-                lon=line.substring(index+1, last);
-
-                index=last;
-                last=line.indexOf(",", index + 1);
-                code=line.substring(index+1, last);
-
-                index=last;
-                name=line.substring(index+1, line.length());
-
-                latNum=Double.parseDouble(lat);
-                lonNum=Double.parseDouble(lon);
-
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(latNum,lonNum ))
-                        .title(name)
-                        .snippet(code));
-            }
-        } catch (IOException e) {
-
-        }
-*/
-
-
-        /*
-        TEST LOCATION
-        MarkerOptions m = new MarkerOptions()
-
-                .position(new LatLng(32.877716, -117.229534))
-                .title("You are here");
-
-        mMap.addMarker(m);
-        */
-
 
     }
 
