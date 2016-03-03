@@ -57,14 +57,16 @@ public class MapsActivity extends FragmentActivity  {
 
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-        setUpMTSStops();
-        Log.d("MTS STOPS",Integer.toString(stops.size()));
+        //setUpMTSStops();
+
 
         Global g = (Global) getApplication();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        //MtsStop usage?
+        // test();
     }
 
     /**
@@ -81,6 +83,28 @@ public class MapsActivity extends FragmentActivity  {
     // ****************************************************************************
     /*
     //*******************************************************************************/
+    private void test(){
+        Log.d("MTS STOPS", Integer.toString(stops.size()));
+        Log.d("MTS STOPS","finds stop from stop id(string): "+Boolean.toString(stops.contains("11151")));
+        Log.d("MTS STOPS","finds stop from a stop(MtsStop): "+Boolean.toString(stops.contains(new MtsStop("11151"))));
+        if(stops.contains(new MtsStop("11151"))){
+            MtsStop temp= (MtsStop)stops.get(stops.indexOf(new MtsStop("11151")));
+            if(temp==null){
+                Log.d("MTS_STOPS","stop is null");
+            }else{
+                Log.d("MTS_STOPS",temp.getID());
+                for(Route r:temp.routes){
+                    Log.d("MTS_STOPS","routeid "+r.getID());
+                }
+            }
+
+            Log.d("MTS STOPS",Boolean.toString(temp.contains("202")));
+            Log.d("MTS STOPS",Boolean.toString(temp.contains(new Route("202"))));
+
+            //Log.d("MTS_STOPS","Found route from new route: "+temp.getRoute(new Route("202")).getID());
+            //Log.d("MTS_STOPS", "Found route from string: " + temp.getRoute("202").getID());
+        }
+    }
     private void setUpMTSStops() {
         String line=null;
         String lat=null, lon=null, code=null,name=null;
@@ -94,10 +118,12 @@ public class MapsActivity extends FragmentActivity  {
         InputStreamReader inputReader = new InputStreamReader(ins);
         BufferedReader bRead = new BufferedReader(inputReader);
         try {
-
+            int count=0;
+            MtsStop s=null;
+            Route r;
             while (( line = bRead.readLine()) != null) {
-                MtsStop s=null;
-                Route r=null;
+
+
                 if(line.contains("+")) {
                     last = line.indexOf(",");
                     //finds lattitude
@@ -110,7 +136,7 @@ public class MapsActivity extends FragmentActivity  {
 
                     index = last;
                     last = line.indexOf(",", index + 1);
-                    //finds stopid
+                    //finds stopID
                     code = line.substring(index + 1, last);
 
                     index = last;
@@ -119,28 +145,30 @@ public class MapsActivity extends FragmentActivity  {
 
                     latNum = Double.parseDouble(lat);
                     lonNum = Double.parseDouble(lon);
+                    //creates new stop
                     s=new MtsStop(latNum,lonNum,code,name);
                     stops.add(s);
                 }else if (line.contains("_")){
                     last=line.indexOf("_");
                     routeID=line.substring(0, last);
+
                     r=new Route(routeID);
                     while(last<line.length()-1) {
                         index=last;
                         last = line.indexOf(",", index + 1);
                         time=line.substring(index + 1, last);
+                        //adds into priority queue to be sorted
                         r.addTime(time);
+                        count++;
                     }
-                    if(s!=null) {
-                        s.addRoute(r);
-                    }
+                    //when done adding times, adds to final list
+                    r.finalizeList();
+                    s.addRoute(r);
 
 
                 }
-
-
-
             }
+            Log.d("MTS",Integer.toString(count));
         } catch (IOException e) {
             Log.e("ERROR", "ERROR READING MTS STOPS");
         }

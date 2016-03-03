@@ -1,8 +1,9 @@
 package com.example.user.myapplication;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by EC on 3/3/2016.
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 class MtsStop {
     private double lat,lon;
     private String id,name;
-    private ArrayList<Route> routes;
+    public ArrayList<Route> routes;
 
     public MtsStop(double lat, double lon,String id,String name){
         this.lat=lat;
@@ -47,37 +48,56 @@ class MtsStop {
             }else{
                 return false;
             }
+        }else if (o instanceof String) {
+            String x=(String)o;
+            if (x.equals(id)){
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
     }
     @Override
     public int hashCode(){
-        return Integer.parseInt(id);
+        return id.hashCode();
     }
 
     public String getID(){
         return id;
     }
 
-    public Route findR(Route r){
+    public Route getRoute(Route r){
         return (Route)routes.get(routes.indexOf(r));
+    }
+    public Route getRoute(String r){
+        return (Route)routes.get(routes.indexOf(r));
+    }
+
+    public boolean contains(Route r){
+        return routes.contains(r);
+    }
+    public boolean contains(String r){
+        return routes.contains(r);
     }
 
 }// end stop
 
 
 class Route{
-    private ArrayList<String> times;
+    private Queue<String> timeSort;
+    private List<String> times;
     String id;
     public Route(String id){
         this.id=id;
+        timeSort=new PriorityQueue<>();
         times=new ArrayList<String>();
     }
 
 
     public void addTime(String time){
-        times.add(time);
+        timeSort.add(time);
     }
 
     public Route clone(){
@@ -93,6 +113,13 @@ class Route{
             }else{
                 return false;
             }
+        }else if(o instanceof String) {
+            String x=(String)o;
+            if(id.equals(o)) {
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
@@ -100,7 +127,7 @@ class Route{
 
     @Override
     public int hashCode(){
-        return Integer.parseInt(id);
+        return id.hashCode();
     }
 
     public String getID(){
@@ -108,8 +135,14 @@ class Route{
     }
 
 
-    public ArrayList getTimesList(){
+    public List getTimesList(){
         return times;
+    }
+    public void finalizeList(){
+        for(String s:timeSort){
+            times.add(timeSort.poll());
+        }
     }
 
 }//end route
+
