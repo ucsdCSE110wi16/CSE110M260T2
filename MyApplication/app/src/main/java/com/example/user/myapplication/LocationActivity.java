@@ -2,17 +2,29 @@ package com.example.user.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import java.io.IOException;
+import java.util.List;
 
 public class LocationActivity extends AppCompatActivity {
     //google maps key
@@ -54,12 +66,13 @@ public class LocationActivity extends AppCompatActivity {
                                           KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                 }
                 return false;
             }
         });
+
     }
 
     public void addListenerOnButton() {
@@ -70,10 +83,10 @@ public class LocationActivity extends AppCompatActivity {
         auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(context, MapsActivity.class);
-                startActivity(intent);
-                Global g = (Global)getApplication();
-                g.setData_method("auto");
+            Intent intent = new Intent(context, MapsActivity.class);
+            startActivity(intent);
+            Global g = (Global) getApplication();
+            g.setData_method("auto");
             }
         });
 

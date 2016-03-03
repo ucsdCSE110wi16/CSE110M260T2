@@ -37,6 +37,8 @@ public class WalkActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 progress = progresValue;
+                //changes as user swipes
+                speedText.setText(progress + "/" + seekBar.getMax());
             }
 
             @Override
@@ -49,7 +51,7 @@ public class WalkActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // Display the value in textview
-                speedText.setText(progress + "/" + seekBar.getMax());
+
             }
         });
 
