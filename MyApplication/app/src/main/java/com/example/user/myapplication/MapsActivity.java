@@ -1,12 +1,14 @@
 package com.example.user.myapplication;
 
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -14,11 +16,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.ConnectionResult;
+
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -29,13 +29,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 
-import com.example.user.myapplication.MtsStop;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONObject;
 
 public class MapsActivity extends FragmentActivity  {
 
@@ -57,16 +59,17 @@ public class MapsActivity extends FragmentActivity  {
 
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
         //setUpMTSStops();
-
-
+        //MtsStop usage?
+        //test();
         Global g = (Global) getApplication();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        //MtsStop usage?
-        // test();
+
+
     }
 
     /**
@@ -85,24 +88,19 @@ public class MapsActivity extends FragmentActivity  {
     //*******************************************************************************/
     private void test(){
         Log.d("MTS STOPS", Integer.toString(stops.size()));
-        Log.d("MTS STOPS","finds stop from stop id(string): "+Boolean.toString(stops.contains("11151")));
+        //Search route or stop from stopID/routeID and making new stop/route
         Log.d("MTS STOPS","finds stop from a stop(MtsStop): "+Boolean.toString(stops.contains(new MtsStop("11151"))));
         if(stops.contains(new MtsStop("11151"))){
             MtsStop temp= (MtsStop)stops.get(stops.indexOf(new MtsStop("11151")));
             if(temp==null){
                 Log.d("MTS_STOPS","stop is null");
-            }else{
-                Log.d("MTS_STOPS",temp.getID());
-                for(Route r:temp.routes){
-                    Log.d("MTS_STOPS","routeid "+r.getID());
+            }else {
+                Log.d("MTS_STOPS", temp.getID());
+                for (Route r : temp.routes) {
+                    Log.d("MTS_STOPS", "routeid " + r.getID());
                 }
             }
-
-            Log.d("MTS STOPS",Boolean.toString(temp.contains("202")));
             Log.d("MTS STOPS",Boolean.toString(temp.contains(new Route("202"))));
-
-            //Log.d("MTS_STOPS","Found route from new route: "+temp.getRoute(new Route("202")).getID());
-            //Log.d("MTS_STOPS", "Found route from string: " + temp.getRoute("202").getID());
         }
     }
     private void setUpMTSStops() {
@@ -146,6 +144,7 @@ public class MapsActivity extends FragmentActivity  {
                     latNum = Double.parseDouble(lat);
                     lonNum = Double.parseDouble(lon);
                     //creates new stop
+
                     s=new MtsStop(latNum,lonNum,code,name);
                     stops.add(s);
                 }else if (line.contains("_")){
@@ -153,22 +152,26 @@ public class MapsActivity extends FragmentActivity  {
                     routeID=line.substring(0, last);
 
                     r=new Route(routeID);
-                    while(last<line.length()-1) {
-                        index=last;
-                        last = line.indexOf(",", index + 1);
-                        time=line.substring(index + 1, last);
-                        //adds into priority queue to be sorted
-                        r.addTime(time);
-                        count++;
-                    }
-                    //when done adding times, adds to final list
-                    r.finalizeList();
-                    s.addRoute(r);
+                    //if (routeID.equals("202")) {
+                        while (last < line.length() - 1) {
+                            index = last;
+                            last = line.indexOf(",", index + 1);
+                            time = line.substring(index + 1, last);
+                            //adds into priority queue to be sorted
+                            r.addTime(time);
+                            count++;
+
+                        }
+                        //when done adding times, adds to final list
+                        //Log.d("MTS", Integer.toString(count));
+                        r.finalizeList();
+                        s.addRoute(r);
+                    //}
 
 
                 }
             }
-            Log.d("MTS",Integer.toString(count));
+            //Log.d("MTS",Integer.toString(count));
         } catch (IOException e) {
             Log.e("ERROR", "ERROR READING MTS STOPS");
         }
@@ -179,9 +182,9 @@ public class MapsActivity extends FragmentActivity  {
     private void setUpMap(){
 
         Global g = (Global)getApplication();
-
+        mMap.setMyLocationEnabled(true);
         if(g.getData_method()=="auto") {
-            mMap.setMyLocationEnabled(true);
+
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
             // Create a criteria object to retrieve provider
@@ -203,6 +206,15 @@ public class MapsActivity extends FragmentActivity  {
             // Zoom in the Google Map
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
+            //DRAWS LINE ON MAP TO DEST
+            //current goes to an address on nobel drive
+            String url = getDirectionsUrl(latLng,new LatLng(32.868366,-117.226428));
+
+            DownloadTask downloadTask = new DownloadTask();
+
+            // Start downloading json data from Google Directions API
+            downloadTask.execute(url);
+
         }
         else if(g.getData_method()=="address") {
             Bundle extras = getIntent().getExtras();
@@ -216,6 +228,7 @@ public class MapsActivity extends FragmentActivity  {
             }
             else {
                 try {
+
                     list = gc.getFromLocationName(value, 1);
 
                 } catch (IOException e) {
@@ -241,6 +254,13 @@ public class MapsActivity extends FragmentActivity  {
                             .position(latLng)
                             .draggable(true)
                             .title(address_line));
+                    String url = getDirectionsUrl(latLng,new LatLng(32.868366,-117.226428));
+
+                    DownloadTask downloadTask = new DownloadTask();
+
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
+
                 }
             }
         }
@@ -300,5 +320,162 @@ public class MapsActivity extends FragmentActivity  {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+
+
+    //Directions 2 points testing
+    private String getDirectionsUrl(LatLng origin,LatLng dest){
+
+        // Origin of route
+        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination="+dest.latitude+","+dest.longitude;
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+
+        String mode = "mode=transit";
+
+        // Building the parameters to the web service
+        String parameters = str_origin+"&"+str_dest+"&"+mode+"&"+sensor;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+
+        return url;
+    }
+    /** A method to download json data from url */
+    private String downloadUrl(String strUrl) throws IOException{
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try{
+            URL url = new URL(strUrl);
+
+            // Creating an http connection to communicate with url
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            // Connecting to url
+            urlConnection.connect();
+
+            // Reading data from url
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while( ( line = br.readLine()) != null){
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        }catch(Exception e){
+            Log.d("ERROR downloading url", e.toString());
+        }finally{
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    // Fetches data from url passed
+    private class DownloadTask extends AsyncTask<String, Void, String>{
+
+        // Downloading data in non-ui thread
+        @Override
+        protected String doInBackground(String... url) {
+
+            // For storing data from web service
+            String data = "";
+
+            try{
+                // Fetching the data from web service
+                data = downloadUrl(url[0]);
+            }catch(Exception e){
+                Log.d("Background Task",e.toString());
+            }
+            return data;
+        }
+
+        // Executes in UI thread, after the execution of
+        // doInBackground()
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+            // Invokes the thread for parsing the JSON data
+            parserTask.execute(result);
+        }
+    }
+
+    /** A class to parse the Google Places in JSON format */
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> > {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try{
+                jObject = new JSONObject(jsonData[0]);
+                DirectionsJSONParser parser = new DirectionsJSONParser();
+
+                // Starts parsing data
+                routes = parser.parse(jObject);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        // Executes in UI thread, after the parsing process
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points = null;
+            PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            // Traversing through all the routes
+            for(int i=0;i<result.size();i++){
+                points = new ArrayList<LatLng>();
+                lineOptions = new PolylineOptions();
+
+                // Fetching i-th route
+                List<HashMap<String, String>> path = result.get(i);
+
+                // Fetching all the points in i-th route
+                for(int j=0;j<path.size();j++){
+                    HashMap<String,String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                // Adding all the points in the route to LineOptions
+                lineOptions.addAll(points);
+                lineOptions.width(4);
+                lineOptions.color(Color.RED);
+            }
+
+            // Drawing polyline in the Google Map for the i-th route
+            mMap.addPolyline(lineOptions);
+        }
     }
 }
