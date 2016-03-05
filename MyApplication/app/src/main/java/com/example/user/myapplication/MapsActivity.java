@@ -335,18 +335,19 @@ public class MapsActivity extends FragmentActivity  {
 
         // Sensor enabled
         String sensor = "sensor=false";
+        String time ="departure_time=1457124650";
 
         String mode = "mode=transit";
 
         // Building the parameters to the web service
-        String parameters = str_origin+"&"+str_dest+"&"+mode+"&"+sensor;
+        String parameters = str_origin+"&"+str_dest+"&"+mode+"&"+time+"&"+sensor;
 
         // Output format
         String output = "json";
 
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
-
+        Log.d("GOOGLE URL",url);
         return url;
     }
     /** A method to download json data from url */
