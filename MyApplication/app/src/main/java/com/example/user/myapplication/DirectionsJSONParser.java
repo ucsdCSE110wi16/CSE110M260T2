@@ -4,6 +4,8 @@ package com.example.user.myapplication;
  * Created by EC on 3/3/2016.
  */
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +43,22 @@ public class DirectionsJSONParser {
                     for(int k=0;k<jSteps.length();k++){
                         String polyline = "";
                         polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
+
+                        if( ((JSONObject)jSteps.get(k)).has("transit_details")){
+                            String x, time;
+                            double lat=0,lon=0;
+                            Integer timenum=0;
+                            x  =(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("line").get("short_name"));
+                            lat=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lat"));
+                            lon=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lng"));
+                            time=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("text"));
+                            timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
+                            if(lat!=0 && lon!=0) {
+                                Log.d("JSON"," =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
+                                Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
+                            }
+                            Log.d("JSON", "bus route: "+x);
+                        }
                         List<LatLng> list = decodePoly(polyline);
 
                         /** Traversing all points */
@@ -58,6 +76,7 @@ public class DirectionsJSONParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }catch (Exception e){
+            e.printStackTrace();
         }
 
         return routes;
