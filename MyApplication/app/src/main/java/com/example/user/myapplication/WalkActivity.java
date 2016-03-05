@@ -37,6 +37,8 @@ public class WalkActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 progress = progresValue;
+                //changes as user swipes
+                speedText.setText(progress + "/" + seekBar.getMax());
             }
 
             @Override
@@ -49,7 +51,7 @@ public class WalkActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // Display the value in textview
-                speedText.setText(progress + "/" + seekBar.getMax());
+
             }
         });
 
@@ -77,7 +79,7 @@ public class WalkActivity extends AppCompatActivity {
         spd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                intent = new Intent(context, MapsActivity.class);
+                intent = new Intent(context, LocationActivity.class);
                 startActivity(intent);
                 Global g=(Global)getApplication();
                 g.setData_bus_kind(busKind);
