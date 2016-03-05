@@ -46,7 +46,7 @@ public class LocationActivity extends AppCompatActivity {
 
         Global g = (Global)getApplication();
         Geocoder geocoder=new Geocoder(this);
-        List l;
+        List l = null;
         EditText address = (EditText) findViewById(R.id.Address);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
