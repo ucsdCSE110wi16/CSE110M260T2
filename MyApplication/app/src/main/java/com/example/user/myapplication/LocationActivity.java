@@ -46,7 +46,7 @@ public class LocationActivity extends AppCompatActivity {
 
         Global g = (Global)getApplication();
         Geocoder geocoder=new Geocoder(this);
-        List l;
+        List l=null;
         EditText address = (EditText) findViewById(R.id.Address);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -64,7 +64,7 @@ public class LocationActivity extends AppCompatActivity {
         catch(Exception e){
             e.printStackTrace();
         }
-        if(l!=null || l.isEmpty()){
+        if(l==null || l.isEmpty()){
             Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
         }else{
             Address a= (Address)l.get(0);
@@ -108,7 +108,7 @@ public class LocationActivity extends AppCompatActivity {
         auto_button = (Button) findViewById(R.id.auto_ucsd);
         enter_button = (Button) findViewById(R.id.enter_ucsd);
 
-        auto_button.setOnClickListener(new View.OnClickListener() {
+        /*auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
             Intent intent = new Intent(context, MapsActivity.class);
@@ -116,7 +116,7 @@ public class LocationActivity extends AppCompatActivity {
             Global g = (Global) getApplication();
             g.setData_method("auto");
             }
-        });
+        });*/
 
         //when user inputs an address
         enter_button.setOnClickListener(new View.OnClickListener() {
