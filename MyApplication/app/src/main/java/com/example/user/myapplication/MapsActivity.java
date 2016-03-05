@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity  {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
-    String value;
+    String value,destination;
     List<Address> list;
     List<MtsStop> stops=new ArrayList<MtsStop>();
     String result;
@@ -183,88 +183,81 @@ public class MapsActivity extends FragmentActivity  {
 
         Global g = (Global)getApplication();
         mMap.setMyLocationEnabled(true);
-        if(g.getData_method()=="auto") {
 
-            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            value = extras.getString("address_entered");
+            destination=extras.getString("destination");
+        }
 
-            // Create a criteria object to retrieve provider
-            Criteria criteria = new Criteria();
-            // Get the name of the best provider
-            String provider = locationManager.getBestProvider(criteria, true);
-            // Get Current Location
-            Location myLocation = locationManager.getLastKnownLocation(provider);
-            //set map type
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            // Get latitude of the current location
-            double latitude = myLocation.getLatitude();
-            // Get longitude of the current location
-            double longitude = myLocation.getLongitude();
-            // Create a LatLng object for the current location
-            LatLng latLng = new LatLng(latitude, longitude);
-            // Show the current location in Google Map
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            // Zoom in the Google Map
+
+
+        Geocoder gc = new Geocoder(this);
+        LatLng destLatLng=null, startLatLng=null;
+        if(value == null || destination==null){
+            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+        }
+        else {
+            destLatLng = makeMarker(destination, mMap);
+            startLatLng = makeMarker(value, mMap);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(startLatLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
-            //DRAWS LINE ON MAP TO DEST
-            //current goes to an address on nobel drive
-            String url = getDirectionsUrl(latLng,new LatLng(32.868366,-117.226428));
+            if (destLatLng != null && startLatLng != null) {
+                String url = getDirectionsUrl(startLatLng, destLatLng);
 
-            DownloadTask downloadTask = new DownloadTask();
+                DownloadTask downloadTask = new DownloadTask();
 
-            // Start downloading json data from Google Directions API
-            downloadTask.execute(url);
-
-        }
-        else if(g.getData_method()=="address") {
-            Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                value = extras.getString("address_entered");
+                // Start downloading json data from Google Directions API
+                downloadTask.execute(url);
             }
-            Geocoder gc = new Geocoder(this);
 
-            if(value == null){
-                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-            }
-            else {
-                try {
+            if (startLatLng != null && destLatLng != null) {
+                String url = getDirectionsUrl(startLatLng, destLatLng);
 
-                    list = gc.getFromLocationName(value, 1);
+                DownloadTask downloadTask = new DownloadTask();
 
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                if(list.isEmpty()){
-                    Toast.makeText(this, "Location not found.", Toast.LENGTH_SHORT).show();
-                    this.finish();
-                }
-                else{
-                    Address add = list.get(0);
-                    double latitude = add.getLatitude();
-                    double longitude = add.getLongitude();
-
-                    String address_line = add.getAddressLine(0);
-
-                    LatLng latLng = new LatLng(latitude, longitude);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                    mMap.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .draggable(true)
-                            .title(address_line));
-                    String url = getDirectionsUrl(latLng,new LatLng(32.868366,-117.226428));
-
-                    DownloadTask downloadTask = new DownloadTask();
-
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
-
-                }
+                // Start downloading json data from Google Directions API
+                downloadTask.execute(url);
             }
         }
 
+
+    }
+
+    private LatLng makeMarker(String s, GoogleMap m){
+        Geocoder gc=new Geocoder(this);
+        LatLng point=null;
+        try {
+
+            list = gc.getFromLocationName(s, 1);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if(list.isEmpty()){
+            Toast.makeText(this, "Location not found.", Toast.LENGTH_SHORT).show();
+            this.finish();
+        }
+        else{
+            Address add = list.get(0);
+            double latitude = add.getLatitude();
+            double longitude = add.getLongitude();
+
+            String address_line = add.getAddressLine(0);
+
+            point = new LatLng(latitude, longitude);
+            mMap.addMarker(new MarkerOptions()
+                    .position(point)
+                    .draggable(true)
+                    .title(address_line));
+
+
+        }
+        return point;
     }
 
     private void setUpMapIfNeeded() {
