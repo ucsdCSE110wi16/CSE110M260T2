@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -42,6 +45,31 @@ public class LocationActivity extends AppCompatActivity {
         addListenerOnButton();
 
         Global g = (Global)getApplication();
+        Geocoder geocoder=new Geocoder(this);
+        List l;
+        EditText address = (EditText) findViewById(R.id.Address);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        // Create a criteria object to retrieve provider
+        Criteria criteria = new Criteria();
+        // Get the name of the best provider
+        String provider = locationManager.getBestProvider(criteria, true);
+        // Get Current Location
+        Location myLocation = locationManager.getLastKnownLocation(provider);
+        try {
+            l = geocoder.getFromLocation(myLocation.getLatitude(),
+                    myLocation.getLongitude(), 1);
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        if(l!=null || l.isEmpty()){
+            Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
+        }else{
+            Address a= (Address)l.get(0);
+            address.setText(a.getAddressLine(0));
+        }
 
         if(g.getData_bus_kind()=="MTS"){
             String text= "MTS";
@@ -90,14 +118,17 @@ public class LocationActivity extends AppCompatActivity {
             }
         });
 
+        //when user inputs an address
         enter_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 EditText address = (EditText) findViewById(R.id.Address);
+                EditText destination= (EditText)findViewById(R.id.destination);
 
                 String address_enter = address.getText().toString();
+                String dest_address = destination.getText().toString();
 
-                if (address_enter.matches("")) {
+                if (address_enter.matches("")||dest_address.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an address.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -106,7 +137,9 @@ public class LocationActivity extends AppCompatActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putString("address_entered", address_enter);
+                bundle.putString("destination",dest_address);
                 intent.putExtras(bundle);
+
 
                 startActivity(intent);
                 Global g = (Global) getApplication();
