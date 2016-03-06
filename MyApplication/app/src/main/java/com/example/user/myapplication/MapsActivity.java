@@ -139,7 +139,6 @@ public class MapsActivity extends FragmentActivity implements
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                     mMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .draggable(true)
                             .title(address_line));
                 }
             }
