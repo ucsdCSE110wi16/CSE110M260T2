@@ -28,7 +28,7 @@ public class LocationActivity extends AppCompatActivity {
 
     //choose location based on current or address
 
-    Button auto_button,enter_button;
+    Button auto_button,enter_button,route_button;
 
 
     @Override
@@ -84,6 +84,7 @@ public class LocationActivity extends AppCompatActivity {
         final Context context = this;
         auto_button = (Button) findViewById(R.id.auto_ucsd);
         enter_button = (Button) findViewById(R.id.enter_ucsd);
+        route_button=(Button)findViewById(R.id.findStopBut);
 
         auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +124,31 @@ public class LocationActivity extends AppCompatActivity {
                 startActivity(intent);
                 Global g = (Global) getApplication();
                 g.setData_method("address");
+            }
+        });
+
+        route_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+        public void onClick(View v){
+                EditText stopid=(EditText)findViewById(R.id.stopID);
+                EditText routeid=(EditText)findViewById(R.id.routeID);
+                String stopIDText=stopid.getText().toString();
+                String routeText=routeid.getText().toString();
+                if (routeText.matches("")||routeText.matches("")) {
+                    Toast.makeText(LocationActivity.this, "You did not enter an Route # or Stop ID.", Toast.LENGTH_SHORT).show();
+                }else {
+                    Intent intent = new Intent(context, MapsActivity.class);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("stopID", stopIDText);
+                    bundle.putString("routeID", routeText);
+                    intent.putExtras(bundle);
+                    Global g=(Global)getApplication();
+                    g.setData_method("id");
+
+
+                    startActivity(intent);
+                }
             }
         });
     }

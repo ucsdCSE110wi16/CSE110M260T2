@@ -189,90 +189,86 @@ public class MapsActivity extends FragmentActivity  {
     private void setUpMap(){
 
         Global g = (Global)getApplication();
-        try {
-            mMap.setMyLocationEnabled(true);
-        }
-        catch(SecurityException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
-        }
-
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            value = extras.getString("address_entered");
-            destination=extras.getString("destination");
-        }
 
-        if(value == null || destination==null){
-            Toast.makeText(this, value, Toast.LENGTH_LONG).show();
-        }
-        else {
-            //uses current location if "Your Location" was entered
-            destOpt = getMarkerOpt(destination);
-            if(value.equals("Your Location")){
-                Geocoder geocoder=new Geocoder(this);
-                List l=null;
-                LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if(g.getData_method().equals("address")) {
+            //if user entered an address/current location and destination
+            if (extras != null) {
+                value = extras.getString("address_entered");
+                destination = extras.getString("destination");
+            }
 
-                // Create a criteria object to retrieve provider
-                Criteria criteria = new Criteria();
-                // Get the name of the best provider
-                String provider = locationManager.getBestProvider(criteria, true);
-                // Get Current Location
-                Location myLocation=null;
-                try {
-                    myLocation = locationManager.getLastKnownLocation(provider);
-                }
-                catch(SecurityException e){
-                    e.printStackTrace();
-                    Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
-                }
+            if (value == null || destination == null) {
+                Toast.makeText(this, value, Toast.LENGTH_LONG).show();
+            } else {
+                //uses current location if "Your Location" was entered
+                destOpt = getMarkerOpt(destination);
+                if (value.equals("Your Location")) {
+                    Geocoder geocoder = new Geocoder(this);
+                    List l = null;
+                    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-                if(myLocation==null){
-                    Log.d("LOCATION","loc was null");
-                    Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
-                    this.finish();
-                }else {
+                    // Create a criteria object to retrieve provider
+                    Criteria criteria = new Criteria();
+                    // Get the name of the best provider
+                    String provider = locationManager.getBestProvider(criteria, true);
+                    // Get Current Location
+                    Location myLocation = null;
                     try {
-                        l = geocoder.getFromLocation(myLocation.getLatitude(),
-                                myLocation.getLongitude(), 1);
-
-                    } catch (Exception e) {
+                        myLocation = locationManager.getLastKnownLocation(provider);
+                        mMap.setMyLocationEnabled(true);
+                    } catch (SecurityException e) {
                         e.printStackTrace();
+                        Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
                     }
-                    if (l == null || l.isEmpty()) {
+
+                    if (myLocation == null) {
+                        Log.d("LOCATION", "location was null");
                         Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
+                        this.finish();
                     } else {
-                        Address a = (Address) l.get(0);
-                        double lat = a.getLatitude();
-                        double lon = a.getLongitude();
-                        String line = a.getAddressLine(0);
-                        startLatLng = new LatLng(lat, lon);
-                        startOpt=(new MarkerOptions()
-                                .position(startLatLng)
-                                .draggable(true)
-                                .title(line));
-                        Log.d("ADDRESS", a.getAddressLine(0));
-                        Log.d("ADDRESS",a.getAddressLine(1));
-                        Log.d("ADDRESS",a.getAddressLine(2));
+                        try {
+                            l = geocoder.getFromLocation(myLocation.getLatitude(),
+                                    myLocation.getLongitude(), 1);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (l == null || l.isEmpty()) {
+                            Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Address a = (Address) l.get(0);
+                            double lat = a.getLatitude();
+                            double lon = a.getLongitude();
+                            String line = a.getAddressLine(0);
+                            startLatLng = new LatLng(lat, lon);
+                            startOpt = (new MarkerOptions()
+                                    .position(startLatLng)
+                                    .draggable(true)
+                                    .title(line));
+                            Log.d("ADDRESS", a.getAddressLine(0));
+                            Log.d("ADDRESS", a.getAddressLine(1));
+                            Log.d("ADDRESS", a.getAddressLine(2));
+                        }
                     }
+                } else {
+                    //handles an address
+                    startOpt = getMarkerOpt(value);
                 }
-            }else {
-                //handles an address
-                startOpt = getMarkerOpt(value);
+
+
+                if (startOpt != null && destOpt != null) {
+                    String url = getDirectionsUrl(startOpt.getPosition(), destOpt.getPosition());
+
+                    DownloadTask downloadTask = new DownloadTask();
+
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
+                }
             }
-
-
-
-            if (startOpt != null && destOpt != null) {
-                String url = getDirectionsUrl(startOpt.getPosition(), destOpt.getPosition());
-
-                DownloadTask downloadTask = new DownloadTask();
-
-                // Start downloading json data from Google Directions API
-                downloadTask.execute(url);
-            }
+        }else if(g.getData_method().equals("id")){
+            //use stop or route number to get bus stop
         }
 
 
@@ -530,13 +526,13 @@ public class MapsActivity extends FragmentActivity  {
 
             Global g = (Global) getApplication();
             //if there is a bus available
-            if(g.getMarker()!=null) {
+            if(g.getStartMarker()!=null) {
                 //add bus stop to map
-                mMap.addMarker(g.getMarker());
+                mMap.addMarker(g.getStartMarker());
+                mMap.addMarker(g.getEndMarker());
                 if(startOpt!=null && destOpt!=null){
                     //add text to starting/end markers for how long to get to stop and destination
                     startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "m to walk to bus stop");
-                    destOpt.snippet("Bus reaches destination at " + g.getArrival_time());
                 }
             }else{
                 //if no buses available, tell user

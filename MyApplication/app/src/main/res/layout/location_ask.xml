@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Find Stop"
-                android:id="@+id/stopButton"
+                android:id="@+id/findStopBut"
                 android:layout_alignParentBottom="true"
                 android:layout_alignLeft="@+id/enter_ucsd"
                 android:layout_alignStart="@+id/enter_ucsd" />

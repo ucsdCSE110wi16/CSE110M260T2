@@ -50,8 +50,8 @@ public class DirectionsJSONParser {
 
 
                         if( ((JSONObject)jSteps.get(k)).has("transit_details")){
-                            String x, time, arrival;
-                            double lat=0,lon=0;
+                            String x, time,time2,name,name2;
+                            double lat=0,lon=0,lat2=0,lon2=0;
                             Integer timenum=0;
 
                             //keep track if there is a bus in the route
@@ -62,19 +62,28 @@ public class DirectionsJSONParser {
                             //lat lon of bus stop to get on
                             lat=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lat"));
                             lon=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lng"));
+                            lat2=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_stop").getJSONObject("location").get("lat"));
+                            lon2=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_stop").getJSONObject("location").get("lng"));
                             //time as string ex=10:59am
                             time=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("text"));
+                            time2=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_time").get("text"));
+                            name=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").get("name"));
+                            name2=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_stop").get("name"));
                             //time as seconds since Jan 1, 1970
-                            timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
+                            //timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
                             if(lat!=0 && lon!=0) {
                                 //if found bus stop lat long, create marker for it
-                                g.setMarker(new MarkerOptions()
-                                    .position(new LatLng(lat,lon))
-                                    .title(x)
-                                    .snippet(x+" arrives: "+time)
+                                g.setStartMarker(new MarkerOptions()
+                                    .position(new LatLng(lat, lon))
+                                    .title(name)
+                                    .snippet(x + " arrives: " + time)
                                 );
                                 //sets arrival time of bus to destination
-                                g.setArrival_time((String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_time").get("text")));
+                                g.setEndMarker(new MarkerOptions()
+                                    .position(new LatLng(lat2,lon2))
+                                    .title(name2)
+                                    .snippet("You will arrive at "+time2)
+                                );
                                 Log.d("JSON", " =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
                                 Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
                             }
@@ -82,7 +91,7 @@ public class DirectionsJSONParser {
                             Log.d("JSON","walk time to stop: "+Integer.toString(timetoStop));
                         }else{
                             if (!busFound) {
-                                g.setMarker(null);
+                                g.setStartMarker(null);
                             }
                         }
                         if (!busFound){
