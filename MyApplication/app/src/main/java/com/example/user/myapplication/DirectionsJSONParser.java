@@ -14,12 +14,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DirectionsJSONParser {
 
     /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
-    public List<List<HashMap<String,String>>> parse(JSONObject jObject){
+    public List<List<HashMap<String,String>>> parse(JSONObject jObject, Global g){
 
         List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String,String>>>() ;
         JSONArray jRoutes = null;
@@ -54,7 +56,12 @@ public class DirectionsJSONParser {
                             time=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("text"));
                             timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
                             if(lat!=0 && lon!=0) {
-                                Log.d("JSON"," =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
+
+                                g.setMarker(new MarkerOptions()
+                                        .position(new LatLng(lat,lon))
+                                        .title(x));
+
+                                Log.d("JSON", " =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
                                 Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
                             }
                             Log.d("JSON", "bus route: "+x);

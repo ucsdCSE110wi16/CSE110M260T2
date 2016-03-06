@@ -429,7 +429,7 @@ public class MapsActivity extends FragmentActivity  {
                 DirectionsJSONParser parser = new DirectionsJSONParser();
 
                 // Starts parsing data
-                routes = parser.parse(jObject);
+                routes = parser.parse(jObject, (Global) getApplication());
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -470,6 +470,8 @@ public class MapsActivity extends FragmentActivity  {
 
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
+            Global g = (Global) getApplication();
+            mMap.addMarker(g.getMarker());
         }
     }
 }

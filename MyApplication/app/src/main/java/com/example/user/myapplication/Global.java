@@ -2,12 +2,20 @@ package com.example.user.myapplication;
 
 import android.app.Application;
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 /**
  * Created by User on 2/20/2016.
  */
 public class Global extends Application {
     private String bus_kind = "1";
     private String method = "2";
+    private MarkerOptions x;
+
+    public void setMarker(MarkerOptions m) {x = m;}
+
+    public MarkerOptions getMarker() {return x;}
 
     public String getData_bus_kind(){
         return bus_kind;
