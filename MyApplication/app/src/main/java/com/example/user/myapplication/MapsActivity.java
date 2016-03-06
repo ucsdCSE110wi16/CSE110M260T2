@@ -194,6 +194,7 @@ public class MapsActivity extends FragmentActivity  {
         }
         catch(SecurityException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
         }
 
 
@@ -225,10 +226,13 @@ public class MapsActivity extends FragmentActivity  {
                 }
                 catch(SecurityException e){
                     e.printStackTrace();
+                    Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
                 }
 
                 if(myLocation==null){
                     Log.d("LOCATION","loc was null");
+                    Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
+                    this.finish();
                 }else {
                     try {
                         l = geocoder.getFromLocation(myLocation.getLatitude(),
@@ -365,7 +369,7 @@ public class MapsActivity extends FragmentActivity  {
 
 
 
-    //Directions 2 points testing
+    //Directions 2 points methods below
     private String getDirectionsUrl(LatLng origin,LatLng dest){
 
         // Origin of route
@@ -392,7 +396,9 @@ public class MapsActivity extends FragmentActivity  {
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
         Log.d("GOOGLE URL",url);
-        return "https://maps.googleapis.com/maps/api/directions/json?origin=32.8816136,-117.2385671&destination=32.867186,-117.2121012&mode=transit&departure_time=1457124650&sensor=false";
+        return url;
+        //url for testing ucsd to nobel drive, march 4, 12:51pm
+        //return "https://maps.googleapis.com/maps/api/directions/json?origin=32.8816136,-117.2385671&destination=32.867186,-117.2121012&mode=transit&departure_time=1457124650&sensor=false";
     }
     /** A method to download json data from url */
     private String downloadUrl(String strUrl) throws IOException{
@@ -521,21 +527,27 @@ public class MapsActivity extends FragmentActivity  {
 
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
+
             Global g = (Global) getApplication();
+            //if there is a bus available
             if(g.getMarker()!=null) {
+                //add bus stop to map
                 mMap.addMarker(g.getMarker());
                 if(startOpt!=null && destOpt!=null){
+                    //add text to starting/end markers for how long to get to stop and destination
                     startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "m to walk to bus stop");
                     destOpt.snippet("Bus reaches destination at " + g.getArrival_time());
                 }
             }else{
+                //if no buses available, tell user
                 Toast.makeText(getApplicationContext(), "No Buses Available", Toast.LENGTH_LONG).show();
             }
 
+            //adds the markers to the map
             mMap.addMarker(startOpt);
             mMap.addMarker(destOpt);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(startOpt.getPosition()));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startOpt.getPosition(),15));
+            //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
     }
 }
