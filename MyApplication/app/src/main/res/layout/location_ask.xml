@@ -127,14 +127,20 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/stopID"
                     android:hint="Enter Stop ID"
-                    android:layout_weight=".5" />
+                    android:layout_weight=".5"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:maxLength="5"
+                    />
 
                 <EditText
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/routeID"
                     android:hint="Route #"
-                    android:layout_weight=".5" />
+                    android:layout_weight=".5"
+                    android:singleLine="true"
+                    />
 
             </LinearLayout>
 

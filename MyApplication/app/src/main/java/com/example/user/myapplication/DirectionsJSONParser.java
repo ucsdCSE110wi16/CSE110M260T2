@@ -27,6 +27,8 @@ public class DirectionsJSONParser {
         JSONArray jRoutes = null;
         JSONArray jLegs = null;
         JSONArray jSteps = null;
+        boolean busFound=false;
+        int timetoStop=0;
 
         try {
 
@@ -42,32 +44,45 @@ public class DirectionsJSONParser {
                     jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
 
                     /** Traversing all steps */
-                    for(int k=0;k<jSteps.length();k++){
+                    for(int k=0;k<jSteps.length();k++) {
                         String polyline = "";
-                        polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
+                        polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
+
 
                         if( ((JSONObject)jSteps.get(k)).has("transit_details")){
-                            String x, time;
+                            String x, time, arrival;
                             double lat=0,lon=0;
                             Integer timenum=0;
+
+                            busFound=true;
                             x  =(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("line").get("short_name"));
                             lat=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lat"));
                             lon=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lng"));
                             time=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("text"));
+
                             timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
                             if(lat!=0 && lon!=0) {
 
                                 g.setMarker(new MarkerOptions()
                                     .position(new LatLng(lat,lon))
                                     .title(x)
-                                    .snippet(time)
+                                    .snippet(x+" arrives: "+time)
                                 );
+                                g.setArrival_time((String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_time").get("text")));
                                 Log.d("JSON", " =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
                                 Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
                             }
                             Log.d("JSON", "bus route: "+x);
+                            Log.d("JSON","walk time to stop: "+Integer.toString(timetoStop));
                         }else{
-                            g.setMarker(null);
+                            if (!busFound) {
+                                g.setMarker(null);
+                            }
+                        }
+                        if (!busFound){
+                            //if no bus found, continue adding time
+                            timetoStop += ((Integer) ((JSONObject) jSteps.get(k)).getJSONObject("duration").get("value"));
+                            g.setWalking_to_bus(timetoStop/60+1);
                         }
                         List<LatLng> list = decodePoly(polyline);
 

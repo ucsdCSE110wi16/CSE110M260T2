@@ -47,6 +47,8 @@ public class MapsActivity extends FragmentActivity  {
     List<Address> list;
     List<MtsStop> stops=new ArrayList<MtsStop>();
     String result;
+    LatLng destLatLng=null, startLatLng=null;
+    MarkerOptions destOpt=null,startOpt=null;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -110,6 +112,7 @@ public class MapsActivity extends FragmentActivity  {
         String routeID=null,time=null;
         double latNum,lonNum;
         int index=0, last=0;
+
 
         try {
             InputStream ins = getResources().openRawResource(
@@ -198,16 +201,12 @@ public class MapsActivity extends FragmentActivity  {
             destination=extras.getString("destination");
         }
 
-
-
-        Geocoder gc = new Geocoder(this);
-        LatLng destLatLng=null, startLatLng=null;
         if(value == null || destination==null){
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
         }
         else {
             //uses current location if "Your Location" was entered
-            destLatLng = makeMarker(destination, mMap);
+            destOpt = getMarkerOpt(destination);
             if(value.equals("Your Location")){
                 Geocoder geocoder=new Geocoder(this);
                 List l=null;
@@ -244,7 +243,7 @@ public class MapsActivity extends FragmentActivity  {
                         double lon = a.getLongitude();
                         String line = a.getAddressLine(0);
                         startLatLng = new LatLng(lat, lon);
-                        mMap.addMarker(new MarkerOptions()
+                        startOpt=(new MarkerOptions()
                                 .position(startLatLng)
                                 .draggable(true)
                                 .title(line));
@@ -255,23 +254,13 @@ public class MapsActivity extends FragmentActivity  {
                 }
             }else {
                 //handles an address
-                startLatLng = makeMarker(value, mMap);
+                startOpt = getMarkerOpt(value);
             }
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(startLatLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
-            if (destLatLng != null && startLatLng != null) {
-                String url = getDirectionsUrl(startLatLng, destLatLng);
 
-                DownloadTask downloadTask = new DownloadTask();
-
-                // Start downloading json data from Google Directions API
-                downloadTask.execute(url);
-            }
-
-            if (startLatLng != null && destLatLng != null) {
-                String url = getDirectionsUrl(startLatLng, destLatLng);
+            if (startOpt != null && destOpt != null) {
+                String url = getDirectionsUrl(startOpt.getPosition(), destOpt.getPosition());
 
                 DownloadTask downloadTask = new DownloadTask();
 
@@ -283,7 +272,7 @@ public class MapsActivity extends FragmentActivity  {
 
     }
 
-    private LatLng makeMarker(String s, GoogleMap m){
+    private MarkerOptions getMarkerOpt(String s){
         Geocoder gc=new Geocoder(this);
         LatLng point=null;
         try {
@@ -307,14 +296,14 @@ public class MapsActivity extends FragmentActivity  {
             String address_line = add.getAddressLine(0);
 
             point = new LatLng(latitude, longitude);
-            mMap.addMarker(new MarkerOptions()
+            return (new MarkerOptions()
                     .position(point)
                     .draggable(true)
                     .title(address_line));
 
 
         }
-        return point;
+        return null;
     }
 
     private void setUpMapIfNeeded() {
@@ -401,7 +390,7 @@ public class MapsActivity extends FragmentActivity  {
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
         Log.d("GOOGLE URL",url);
-        return url;
+        return "https://maps.googleapis.com/maps/api/directions/json?origin=32.8816136,-117.2385671&destination=32.867186,-117.2121012&mode=transit&departure_time=1457124650&sensor=false";
     }
     /** A method to download json data from url */
     private String downloadUrl(String strUrl) throws IOException{
@@ -533,9 +522,18 @@ public class MapsActivity extends FragmentActivity  {
             Global g = (Global) getApplication();
             if(g.getMarker()!=null) {
                 mMap.addMarker(g.getMarker());
+                if(startOpt!=null && destOpt!=null){
+                    startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "m to walk to bus stop");
+                    destOpt.snippet("Bus reaches destination at " + g.getArrival_time());
+                }
             }else{
-                Toast.makeText(getApplicationContext(), "No Buses Available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "No Buses Available", Toast.LENGTH_LONG).show();
             }
+
+            mMap.addMarker(startOpt);
+            mMap.addMarker(destOpt);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(startOpt.getPosition()));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
         }
     }
 }
