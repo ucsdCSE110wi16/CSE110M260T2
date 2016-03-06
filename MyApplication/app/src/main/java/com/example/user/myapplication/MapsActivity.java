@@ -1,6 +1,5 @@
 package com.example.user.myapplication;
 
-import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
@@ -90,7 +89,7 @@ public class MapsActivity extends FragmentActivity  {
     //*******************************************************************************/
     private void test(){
         Log.d("MTS STOPS", Integer.toString(stops.size()));
-        //Search route or stop from stopID/routeID and making new stop/route
+        //Search route or stop from stopID/routeID by making new stop/route with id
         Log.d("MTS STOPS","finds stop from a stop(MtsStop): "+Boolean.toString(stops.contains(new MtsStop("11151"))));
         if(stops.contains(new MtsStop("11151"))){
             MtsStop temp= (MtsStop)stops.get(stops.indexOf(new MtsStop("11151")));
@@ -386,12 +385,15 @@ public class MapsActivity extends FragmentActivity  {
 
         // Sensor enabled
         String sensor = "sensor=false";
-        String time ="departure_time=1457124650";
+        //String time ="departure_time=1457124650";
+
 
         String mode = "mode=transit";
 
         // Building the parameters to the web service
-        String parameters = str_origin+"&"+str_dest+"&"+mode+"&"+time+"&"+sensor;
+        String parameters = str_origin+"&"+str_dest+"&"+mode+"&"+sensor;
+        //if ever use time parameter
+        //String parameters = str_origin+"&"+str_dest+"&"+mode+"&"+time+"&"+sensor;
 
         // Output format
         String output = "json";
@@ -531,6 +533,8 @@ public class MapsActivity extends FragmentActivity  {
             Global g = (Global) getApplication();
             if(g.getMarker()!=null) {
                 mMap.addMarker(g.getMarker());
+            }else{
+                Toast.makeText(getApplicationContext(), "No Buses Available", Toast.LENGTH_SHORT).show();
             }
         }
     }

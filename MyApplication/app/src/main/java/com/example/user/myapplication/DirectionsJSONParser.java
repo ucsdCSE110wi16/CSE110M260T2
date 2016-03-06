@@ -66,6 +66,8 @@ public class DirectionsJSONParser {
                                 Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
                             }
                             Log.d("JSON", "bus route: "+x);
+                        }else{
+                            g.setMarker(null);
                         }
                         List<LatLng> list = decodePoly(polyline);
 

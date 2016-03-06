@@ -102,7 +102,7 @@
                 android:layout_alignStart="@+id/enter_ucsd" />
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="10dp"
                 android:id="@+id/space"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
@@ -127,22 +127,13 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/stopID"
                     android:hint="Enter Stop ID"
-                    android:layout_below="@+id/enteter_ucsd"
-                    android:layout_toLeftOf="@+id/enter_ucsd"
-                    android:layout_toStartOf="@+id/enter_ucsd"
                     android:layout_weight=".5" />
 
                 <EditText
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/routeID"
-
                     android:hint="Route #"
-                    android:layout_below="@+id/enter_ucsd"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_toRightOf="@+id/enter_ucsd"
-                    android:layout_toEndOf="@+id/enter_ucsd"
                     android:layout_weight=".5" />
 
             </LinearLayout>
