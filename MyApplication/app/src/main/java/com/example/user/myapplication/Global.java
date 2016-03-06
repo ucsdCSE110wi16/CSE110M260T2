@@ -1,8 +1,6 @@
 package com.example.user.myapplication;
 
 import android.app.Application;
-
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
@@ -11,7 +9,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class Global extends Application {
     private String bus_kind = "1";
     private String method = "2";
-    private MarkerOptions x;
+    private MarkerOptions x=null;
 
     public void setMarker(MarkerOptions m) {x = m;}
 

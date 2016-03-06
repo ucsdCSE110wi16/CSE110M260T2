@@ -58,9 +58,10 @@ public class DirectionsJSONParser {
                             if(lat!=0 && lon!=0) {
 
                                 g.setMarker(new MarkerOptions()
-                                        .position(new LatLng(lat,lon))
-                                        .title(x));
-
+                                    .position(new LatLng(lat,lon))
+                                    .title(x)
+                                    .snippet(time)
+                                );
                                 Log.d("JSON", " =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
                                 Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
                             }

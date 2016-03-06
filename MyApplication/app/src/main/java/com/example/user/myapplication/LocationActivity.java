@@ -2,23 +2,16 @@ package com.example.user.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,36 +38,7 @@ public class LocationActivity extends AppCompatActivity {
         addListenerOnButton();
 
         Global g = (Global)getApplication();
-        Geocoder geocoder=new Geocoder(this);
 
-        List l=null;
-
-        EditText address = (EditText) findViewById(R.id.Address);
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        // Create a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
-        // Get the name of the best provider
-        String provider = locationManager.getBestProvider(criteria, true);
-        // Get Current Location
-        Location myLocation = locationManager.getLastKnownLocation(provider);
-        try {
-            l = geocoder.getFromLocation(myLocation.getLatitude(),
-                    myLocation.getLongitude(), 1);
-
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        if(l==null || l.isEmpty()){
-            Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
-        }else{
-            Address a= (Address)l.get(0);
-            address.setText(a.getAddressLine(0));
-           // Log.d("ADDRESS", a.getAddressLine(0));
-            //Log.d("ADDRESS",a.getAddressLine(1));
-            //Log.d("ADDRESS",a.getAddressLine(2));
-        }
 
         if(g.getData_bus_kind()=="MTS"){
             String text= "MTS";
@@ -91,16 +55,24 @@ public class LocationActivity extends AppCompatActivity {
             img.setImageResource(R.drawable.ucsd);
         }
 
-        final EditText editText= (EditText) findViewById(R.id.Address);
-        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        final EditText address= (EditText) findViewById(R.id.Address);
+        final EditText dest= (EditText) findViewById(R.id.destination);
+        addEditorAction(address);
+        addEditorAction(dest);
 
+
+
+    }
+
+    public void addEditorAction(EditText e){
+        e.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId,
                                           KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
                 return false;
             }
@@ -113,15 +85,17 @@ public class LocationActivity extends AppCompatActivity {
         auto_button = (Button) findViewById(R.id.auto_ucsd);
         enter_button = (Button) findViewById(R.id.enter_ucsd);
 
-        /*auto_button.setOnClickListener(new View.OnClickListener() {
+        auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-            Intent intent = new Intent(context, MapsActivity.class);
+                EditText address=(EditText)findViewById(R.id.Address);
+            /*Intent intent = new Intent(context, MapsActivity.class);
             startActivity(intent);
             Global g = (Global) getApplication();
-            g.setData_method("auto");
+            g.setData_method("auto");*/
+                address.setText("Your Location");
             }
-        });*/
+        });
 
         //when user inputs an address
         enter_button.setOnClickListener(new View.OnClickListener() {

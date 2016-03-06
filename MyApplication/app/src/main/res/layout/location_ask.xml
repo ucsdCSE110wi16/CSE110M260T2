@@ -98,28 +98,54 @@
                 android:text="Find Stop"
                 android:id="@+id/stopButton"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/stopID"
-                android:layout_toEndOf="@+id/stopID" />
-
-            <EditText
+                android:layout_alignLeft="@+id/enter_ucsd"
+                android:layout_alignStart="@+id/enter_ucsd" />
+            <Space
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/stopID"
-                android:hint="Enter Stop ID"
-                android:layout_above="@+id/stopButton"
-                android:layout_toStartOf="@+id/enter_ucsd" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/routeID"
-
-                android:hint="Route #"
-                android:layout_above="@+id/stopButton"
+                android:layout_height="30dp"
+                android:id="@+id/space"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/enter_ucsd"
-                android:layout_toEndOf="@+id/enter_ucsd" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/enter_ucsd" />
+
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:weightSum="1"
+                android:layout_above="@+id/stopButton"
+                android:layout_below="@+id/space">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stopID"
+                    android:hint="Enter Stop ID"
+                    android:layout_below="@+id/enteter_ucsd"
+                    android:layout_toLeftOf="@+id/enter_ucsd"
+                    android:layout_toStartOf="@+id/enter_ucsd"
+                    android:layout_weight=".5" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/routeID"
+
+                    android:hint="Route #"
+                    android:layout_below="@+id/enter_ucsd"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/enter_ucsd"
+                    android:layout_toEndOf="@+id/enter_ucsd"
+                    android:layout_weight=".5" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 

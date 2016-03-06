@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -58,7 +59,7 @@ public class MapsActivity extends FragmentActivity  {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
-        setUpMapIfNeeded();
+
 
         //setUpMTSStops();
         //MtsStop usage?
@@ -68,6 +69,7 @@ public class MapsActivity extends FragmentActivity  {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        setUpMapIfNeeded();
 
 
     }
@@ -109,13 +111,14 @@ public class MapsActivity extends FragmentActivity  {
         String routeID=null,time=null;
         double latNum,lonNum;
         int index=0, last=0;
-        InputStream ins = getResources().openRawResource(
-                getResources().getIdentifier("output",
-                        "raw", getPackageName()));
 
-        InputStreamReader inputReader = new InputStreamReader(ins);
-        BufferedReader bRead = new BufferedReader(inputReader);
         try {
+            InputStream ins = getResources().openRawResource(
+                    getResources().getIdentifier("output",
+                            "raw", getPackageName()));
+
+            InputStreamReader inputReader = new InputStreamReader(ins);
+            BufferedReader bRead = new BufferedReader(inputReader);
             int count=0;
             MtsStop s=null;
             Route r;
@@ -182,7 +185,13 @@ public class MapsActivity extends FragmentActivity  {
     private void setUpMap(){
 
         Global g = (Global)getApplication();
-        mMap.setMyLocationEnabled(true);
+        try {
+            mMap.setMyLocationEnabled(true);
+        }
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
+
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -198,8 +207,57 @@ public class MapsActivity extends FragmentActivity  {
             Toast.makeText(this, value, Toast.LENGTH_LONG).show();
         }
         else {
+            //uses current location if "Your Location" was entered
             destLatLng = makeMarker(destination, mMap);
-            startLatLng = makeMarker(value, mMap);
+            if(value.equals("Your Location")){
+                Geocoder geocoder=new Geocoder(this);
+                List l=null;
+                LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+                // Create a criteria object to retrieve provider
+                Criteria criteria = new Criteria();
+                // Get the name of the best provider
+                String provider = locationManager.getBestProvider(criteria, true);
+                // Get Current Location
+                Location myLocation=null;
+                try {
+                    myLocation = locationManager.getLastKnownLocation(provider);
+                }
+                catch(SecurityException e){
+                    e.printStackTrace();
+                }
+
+                if(myLocation==null){
+                    Log.d("LOCATION","loc was null");
+                }else {
+                    try {
+                        l = geocoder.getFromLocation(myLocation.getLatitude(),
+                                myLocation.getLongitude(), 1);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (l == null || l.isEmpty()) {
+                        Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Address a = (Address) l.get(0);
+                        double lat = a.getLatitude();
+                        double lon = a.getLongitude();
+                        String line = a.getAddressLine(0);
+                        startLatLng = new LatLng(lat, lon);
+                        mMap.addMarker(new MarkerOptions()
+                                .position(startLatLng)
+                                .draggable(true)
+                                .title(line));
+                        Log.d("ADDRESS", a.getAddressLine(0));
+                        Log.d("ADDRESS",a.getAddressLine(1));
+                        Log.d("ADDRESS",a.getAddressLine(2));
+                    }
+                }
+            }else {
+                //handles an address
+                startLatLng = makeMarker(value, mMap);
+            }
 
             mMap.moveCamera(CameraUpdateFactory.newLatLng(startLatLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -471,7 +529,9 @@ public class MapsActivity extends FragmentActivity  {
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
             Global g = (Global) getApplication();
-            mMap.addMarker(g.getMarker());
+            if(g.getMarker()!=null) {
+                mMap.addMarker(g.getMarker());
+            }
         }
     }
 }
