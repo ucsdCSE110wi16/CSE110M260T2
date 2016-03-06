@@ -71,6 +71,9 @@ public class LocationActivity extends AppCompatActivity {
         }else{
             Address a= (Address)l.get(0);
             address.setText(a.getAddressLine(0));
+           // Log.d("ADDRESS", a.getAddressLine(0));
+            //Log.d("ADDRESS",a.getAddressLine(1));
+            //Log.d("ADDRESS",a.getAddressLine(2));
         }
 
         if(g.getData_bus_kind()=="MTS"){
