@@ -54,20 +54,26 @@ public class DirectionsJSONParser {
                             double lat=0,lon=0;
                             Integer timenum=0;
 
+                            //keep track if there is a bus in the route
+
                             busFound=true;
+                            //gets route name
                             x  =(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("line").get("short_name"));
+                            //lat lon of bus stop to get on
                             lat=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lat"));
                             lon=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lng"));
+                            //time as string ex=10:59am
                             time=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("text"));
-
+                            //time as seconds since Jan 1, 1970
                             timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
                             if(lat!=0 && lon!=0) {
-
+                                //if found bus stop lat long, create marker for it
                                 g.setMarker(new MarkerOptions()
                                     .position(new LatLng(lat,lon))
                                     .title(x)
                                     .snippet(x+" arrives: "+time)
                                 );
+                                //sets arrival time of bus to destination
                                 g.setArrival_time((String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_time").get("text")));
                                 Log.d("JSON", " =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
                                 Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
@@ -80,8 +86,9 @@ public class DirectionsJSONParser {
                             }
                         }
                         if (!busFound){
-                            //if no bus found, continue adding time
+                            //if no bus found, continue adding time (still walking to bus stop)
                             timetoStop += ((Integer) ((JSONObject) jSteps.get(k)).getJSONObject("duration").get("value"));
+                            //sets the time in minutes
                             g.setWalking_to_bus(timetoStop/60+1);
                         }
                         List<LatLng> list = decodePoly(polyline);
