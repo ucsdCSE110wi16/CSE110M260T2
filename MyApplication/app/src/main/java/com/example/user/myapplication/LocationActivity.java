@@ -2,17 +2,25 @@ package com.example.user.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import java.io.IOException;
+import java.util.List;
 
 public class LocationActivity extends AppCompatActivity {
     //google maps key
@@ -31,6 +39,7 @@ public class LocationActivity extends AppCompatActivity {
 
         Global g = (Global)getApplication();
 
+
         if(g.getData_bus_kind()=="MTS"){
             String text= "MTS";
             TextView title = (TextView)findViewById(R.id.ask_bus_type);
@@ -46,20 +55,29 @@ public class LocationActivity extends AppCompatActivity {
             img.setImageResource(R.drawable.ucsd);
         }
 
-        final EditText editText= (EditText) findViewById(R.id.Address);
-        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        final EditText address= (EditText) findViewById(R.id.Address);
+        final EditText dest= (EditText) findViewById(R.id.destination);
+        addEditorAction(address);
+        addEditorAction(dest);
 
+
+
+    }
+
+    public void addEditorAction(EditText e){
+        e.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId,
                                           KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
                 return false;
             }
         });
+
     }
 
     public void addListenerOnButton() {
@@ -70,21 +88,26 @@ public class LocationActivity extends AppCompatActivity {
         auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(context, MapsActivity.class);
-                startActivity(intent);
-                Global g = (Global)getApplication();
-                g.setData_method("auto");
+                EditText address=(EditText)findViewById(R.id.Address);
+            /*Intent intent = new Intent(context, MapsActivity.class);
+            startActivity(intent);
+            Global g = (Global) getApplication();
+            g.setData_method("auto");*/
+                address.setText("Your Location");
             }
         });
 
+        //when user inputs an address
         enter_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 EditText address = (EditText) findViewById(R.id.Address);
+                EditText destination= (EditText)findViewById(R.id.destination);
 
                 String address_enter = address.getText().toString();
+                String dest_address = destination.getText().toString();
 
-                if (address_enter.matches("")) {
+                if (address_enter.matches("")||dest_address.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an address.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -93,7 +116,9 @@ public class LocationActivity extends AppCompatActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putString("address_entered", address_enter);
+                bundle.putString("destination",dest_address);
                 intent.putExtras(bundle);
+
 
                 startActivity(intent);
                 Global g = (Global) getApplication();

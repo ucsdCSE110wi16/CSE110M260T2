@@ -69,10 +69,6 @@ public class UCSDBus extends AsyncTask<String, Void, String>
             return heading;
         }
 
-        public Date getLastUpdated() {
-            return lastUpdated;
-        }
-
         private int busID;
         private int routeID;
         private int patternID;
@@ -82,11 +78,10 @@ public class UCSDBus extends AsyncTask<String, Void, String>
         private Coordinate coordinate;
         private int speed;
         private BusDirection heading;
-        private Date lastUpdated;
 
         public UCSDVehicle(int busID, int routeID, int patternID, int nameNum, boolean hasAPC,
                            int doorStatus, Coordinate coordinate,
-                           int speed, BusDirection heading, Date lastUpdated)
+                           int speed, BusDirection heading)
         {
             this.busID = busID;
             this.routeID = routeID;
@@ -97,7 +92,6 @@ public class UCSDBus extends AsyncTask<String, Void, String>
             this.coordinate = coordinate;
             this.speed = speed;
             this.heading = heading;
-            this.lastUpdated = lastUpdated;
         }
     }
 
@@ -132,8 +126,8 @@ public class UCSDBus extends AsyncTask<String, Void, String>
                            String stopName, int rtpiNumber)
         {
             this.stopID = stopID;
-            this.coordinate.latitude = coordinate.latitude;
-            this.coordinate.longitude = coordinate.longitude;
+            this.coordinate = new Coordinate(coordinate.latitude,
+                    coordinate.longitude);
             this.stopName = new String(stopName);
             this.rtpiNumber = rtpiNumber;
         }
@@ -147,11 +141,11 @@ public class UCSDBus extends AsyncTask<String, Void, String>
         private ArrayList<UCSDVehicle> vehicles;
         private ArrayList<Coordinate> path;
 
-        // constructor
-        public UCSDBusRoute(int routeID, String name)
+        public void update()
         {
-            this.routeID = routeID;
-            this.name = name;
+            stops = new ArrayList<UCSDBusStop>();
+            vehicles = new ArrayList<UCSDVehicle>();
+            path = new ArrayList<Coordinate>();
             String stopsJSON = htmlParser.getJSON("http://www.ucsdbus.com/Route/"
                     + new Integer(routeID).toString() + "/Direction/0/Stops");
             String vehiclesJSON = htmlParser.getJSON("http://www.ucsdbus.com/Route/"
@@ -170,10 +164,10 @@ public class UCSDBus extends AsyncTask<String, Void, String>
                 {
                     JSONObject curStop = stopsParser.getJSONObject(new Integer (number++).toString());
                     this.stops.add(new UCSDBusStop(curStop.getInt("ID"),
-                                                    new Coordinate(curStop.getDouble("Latitude"),
-                                                                    curStop.getDouble("Longitude")),
-                                                    curStop.getString("Name"),
-                                                    curStop.getInt("RtpiNumber")));
+                            new Coordinate(curStop.getDouble("Latitude"),
+                                    curStop.getDouble("Longitude")),
+                            curStop.getString("Name"),
+                            curStop.getInt("RtpiNumber")));
 
                 }
 
@@ -216,17 +210,23 @@ public class UCSDBus extends AsyncTask<String, Void, String>
                             break;
                     }
 
-                    // TODO
-                    Date date = new Date(name);
-
                     this.vehicles.add(new UCSDVehicle(
                             curVehicle.getInt("ID"), curVehicle.getInt("RouteId"),
                             curVehicle.getInt("PatternId"), curVehicle.getInt("Name"),
                             curVehicle.getBoolean("HasAPC"), curVehicle.getInt("DoorStatus"),
                             new Coordinate(curVehicle.getDouble("Latitude"),
                                     curVehicle.getDouble("Longitude")),
-                            curVehicle.getInt("Speed"), heading, date
+                            curVehicle.getInt("Speed"), heading
                     ));
+
+                }
+
+                number = 1;
+                while (pathParser.has(new Integer (number).toString()))
+                {
+                    JSONObject curPath = pathParser.getJSONObject(new Integer (number++).toString());
+                    this.path.add(new Coordinate(curPath.getDouble("Latitude"),
+                            curPath.getDouble("Longitude")));
 
                 }
             }
@@ -234,6 +234,14 @@ public class UCSDBus extends AsyncTask<String, Void, String>
             {
                 Log.d("Android : ", "Failed to parse JSON!!!");
             }
+        }
+
+        // constructor
+        public UCSDBusRoute(int routeID, String name)
+        {
+            this.routeID = routeID;
+            this.name = name;
+            update();
         }
 
         public int getRouteID()
@@ -257,9 +265,9 @@ public class UCSDBus extends AsyncTask<String, Void, String>
         routes = new UCSDBusRoute[totalNumStops];
 
         routes[0] = new UCSDBusRoute(3168, "(A)(N) City Shuttle (Arriba/Nobel)");
-        routes[1] = new UCSDBusRoute(0312, "(C) Coaster East");
+        routes[1] = new UCSDBusRoute(312, "(C) Coaster East");
         routes[2] = new UCSDBusRoute(2092, "(C)(W) Coaster East/West (mid-day)");
-        routes[3] = new UCSDBusRoute(0314, "(CP) Chancellor's Park");
+        routes[3] = new UCSDBusRoute(314, "(CP) Chancellor's Park");
         routes[4] = new UCSDBusRoute(1114, "(H) Hillcrest/Campus A.M.");
         routes[5] = new UCSDBusRoute(1264, "(H) Hillcrest/Campus P.M.");
         routes[6] = new UCSDBusRoute(3442, "(L) Clockwise Campus Loop - Peterson Hall to Torrey Pines Center");
@@ -270,7 +278,7 @@ public class UCSDBus extends AsyncTask<String, Void, String>
         routes[11] = new UCSDBusRoute(1098, "(P) Regents");
         routes[12] = new UCSDBusRoute(2399, "(S) SIO Loop");
         routes[13] = new UCSDBusRoute(1434, "(SC) Sanford Consortium Shuttle");
-        routes[14] = new UCSDBusRoute(0313, "(W) Coaster West");
+        routes[14] = new UCSDBusRoute(313, "(W) Coaster West");
 
         return "Success";
     }

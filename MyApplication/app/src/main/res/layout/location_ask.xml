@@ -41,9 +41,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Auto_bus_stop"
                 android:id="@+id/auto_ucsd"
-                android:layout_alignParentBottom="true"
-                android:layout_alignRight="@+id/enter_ucsd"
-                android:layout_alignEnd="@+id/enter_ucsd" />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/imageView"
+                android:layout_toLeftOf="@+id/imageView" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -51,50 +53,96 @@
                 android:ems="10"
                 android:id="@+id/Address"
                 android:inputType="text"
-                android:layout_alignParentTop="true"
+                android:hint="Enter an Address"
+                android:layout_below="@+id/auto_ucsd"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/or"
-                android:id="@+id/textView4"
-                android:textSize="30sp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-
-            <Space
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_below="@+id/textView4"
-                android:layout_alignRight="@+id/Address"
-                android:layout_alignEnd="@+id/Address"
-                android:layout_alignLeft="@+id/Address"
-                android:layout_alignStart="@+id/Address"
-                android:layout_above="@+id/Address"
-                android:id="@+id/space2" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Enter_bus_stop"
-                android:id="@+id/enter_ucsd"
-                android:layout_gravity="center_horizontal"
-                android:layout_below="@+id/Address"
-                android:layout_centerHorizontal="true" />
 
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:id="@+id/imageView"
                 android:src="@drawable/location"
-                android:layout_alignTop="@+id/auto_ucsd"
-                android:layout_toRightOf="@+id/auto_ucsd"
-                android:layout_toEndOf="@+id/auto_ucsd"
-                android:contentDescription="@string/pin" />
+                android:contentDescription="@string/pin"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Go"
+                android:id="@+id/enter_ucsd"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_below="@+id/destination"
+                android:layout_centerHorizontal="true" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/destination"
+                android:hint="Destination"
+                android:inputType="text"
+                android:ems="10"
+                android:layout_below="@+id/Address"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find Stop"
+                android:id="@+id/stopButton"
+                android:layout_alignParentBottom="true"
+                android:layout_alignLeft="@+id/enter_ucsd"
+                android:layout_alignStart="@+id/enter_ucsd" />
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp"
+                android:id="@+id/space"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/enter_ucsd" />
+
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:weightSum="1"
+                android:layout_above="@+id/stopButton"
+                android:layout_below="@+id/space">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stopID"
+                    android:hint="Enter Stop ID"
+                    android:layout_weight=".5"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:maxLength="5"
+                    />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/routeID"
+                    android:hint="Route #"
+                    android:layout_weight=".5"
+                    android:singleLine="true"
+                    />
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -108,6 +156,7 @@
                 android:id="@+id/location_choice"
                 android:layout_gravity="center"
                 android:contentDescription="@string/location" />
+
         </FrameLayout>
 
     </LinearLayout>
