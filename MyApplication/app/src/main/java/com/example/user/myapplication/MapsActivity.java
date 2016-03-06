@@ -11,19 +11,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
-
 import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,10 +35,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import org.json.JSONObject;
 
 public class MapsActivity extends FragmentActivity  {
 
@@ -203,7 +200,7 @@ public class MapsActivity extends FragmentActivity  {
                 Toast.makeText(this, value, Toast.LENGTH_LONG).show();
             } else {
                 //uses current location if "Your Location" was entered
-                destOpt = getMarkerOpt(destination);
+                destOpt = getMarkerOpt(destination,2);
                 if (value.equals("Your Location")) {
                     Geocoder geocoder = new Geocoder(this);
                     List l = null;
@@ -246,7 +243,8 @@ public class MapsActivity extends FragmentActivity  {
                             startOpt = (new MarkerOptions()
                                     .position(startLatLng)
                                     .draggable(true)
-                                    .title(line));
+                                    .title(line)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                             Log.d("ADDRESS", a.getAddressLine(0));
                             Log.d("ADDRESS", a.getAddressLine(1));
                             Log.d("ADDRESS", a.getAddressLine(2));
@@ -254,7 +252,7 @@ public class MapsActivity extends FragmentActivity  {
                     }
                 } else {
                     //handles an address
-                    startOpt = getMarkerOpt(value);
+                    startOpt = getMarkerOpt(value,0);
                 }
 
 
@@ -274,7 +272,7 @@ public class MapsActivity extends FragmentActivity  {
 
     }
 
-    private MarkerOptions getMarkerOpt(String s){
+    private MarkerOptions getMarkerOpt(String s, int color){
         Geocoder gc=new Geocoder(this);
         LatLng point=null;
         try {
@@ -298,11 +296,28 @@ public class MapsActivity extends FragmentActivity  {
             String address_line = add.getAddressLine(0);
 
             point = new LatLng(latitude, longitude);
+
+            if(color == 0){
             return (new MarkerOptions()
                     .position(point)
                     .draggable(true)
-                    .title(address_line));
-
+                    .title(address_line)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            }
+            else if(color == 1){
+                return (new MarkerOptions()
+                        .position(point)
+                        .draggable(true)
+                        .title(address_line)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            }
+            else if(color == 2){
+                return (new MarkerOptions()
+                        .position(point)
+                        .draggable(true)
+                        .title(address_line)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            }
 
         }
         return null;
@@ -517,7 +532,7 @@ public class MapsActivity extends FragmentActivity  {
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(4);
+                lineOptions.width(6);
                 lineOptions.color(Color.RED);
             }
 

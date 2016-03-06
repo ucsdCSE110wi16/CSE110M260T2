@@ -130,8 +130,7 @@
                     android:layout_weight=".5"
                     android:inputType="number"
                     android:singleLine="true"
-                    android:maxLength="5"
-                    android:layout_gravity="center_vertical" />
+                    android:maxLength="5" />
 
                 <EditText
                     android:layout_width="0dp"
@@ -139,8 +138,7 @@
                     android:id="@+id/routeID"
                     android:hint="Route #"
                     android:layout_weight=".5"
-                    android:singleLine="true"
-                    android:layout_gravity="center_vertical" />
+                    android:singleLine="true" />
 
             </LinearLayout>
 
