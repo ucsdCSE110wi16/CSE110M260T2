@@ -67,30 +67,12 @@ public class MapsActivity extends FragmentActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_maps);
-
-
-        //setUpMTSStops();
-        //MtsStop usage?
-        //test();
-        Global g = (Global) getApplication();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
+         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setUpMapIfNeeded();
-
-
     }
-
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-
 
     // ***************************************************************************
     // This is the code that reads creates MTSbusstop stuff
@@ -209,6 +191,12 @@ public class MapsActivity extends FragmentActivity  {
     }
 
     //******************************************************************
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p/>
+     * This should only be called once and when we are sure that {@link #mMap} is not null.
+     */
     private void setUpMap(){
 
         Global g = (Global)getApplication();
@@ -403,10 +391,13 @@ public class MapsActivity extends FragmentActivity  {
                         }
                         mMap.addMarker(m);
                     }
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closest.getLatLng(), 15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closest.getLatLng(), 14));
 
                 }else{
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.8810, -117.2380), 15));
+                    for (MarkerOptions m : optList) {
+                        mMap.addMarker(m);
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.8810, -117.2380), 13));
 
                 }
             }
@@ -688,7 +679,7 @@ public class MapsActivity extends FragmentActivity  {
                 mMap.addMarker(g.getEndMarker());
                 if(startOpt!=null && destOpt!=null){
                     //add text to starting/end markers for how long to get to stop and destination
-                    startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "m to walk to bus stop");
+                    startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "min to walk to bus stop");
                 }
             }else{
                 //if no buses available, tell user
