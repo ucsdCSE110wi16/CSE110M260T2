@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Time;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -402,6 +402,8 @@ public class MapsActivity extends FragmentActivity  {
                 }
             }
         }
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
     }
 
     private MarkerOptions getMarkerOpt(String s, int color){
@@ -417,8 +419,8 @@ public class MapsActivity extends FragmentActivity  {
         }
 
         if(list.isEmpty()){
-            Toast.makeText(this, "Location not found.", Toast.LENGTH_SHORT).show();
-            this.finish();
+            Toast.makeText(this, "Destination location not found.", Toast.LENGTH_SHORT).show();
+            finish();
         }
         else{
             Address add = list.get(0);
@@ -669,7 +671,13 @@ public class MapsActivity extends FragmentActivity  {
             }
 
             // Drawing polyline in the Google Map for the i-th route
-            mMap.addPolyline(lineOptions);
+            try{
+                mMap.addPolyline(lineOptions);
+            }
+            catch (NullPointerException e){
+                Toast.makeText(getApplicationContext(), "No Route Between Points ", Toast.LENGTH_SHORT).show();
+                finish();
+            }
 
             Global g = (Global) getApplication();
             //if there is a bus available
@@ -677,19 +685,23 @@ public class MapsActivity extends FragmentActivity  {
                 //add bus stop to map
                 mMap.addMarker(g.getStartMarker());
                 mMap.addMarker(g.getEndMarker());
+                DecimalFormat df = new DecimalFormat("#.#");
+                DecimalFormat df2 = new DecimalFormat("#");
                 if(startOpt!=null && destOpt!=null){
                     //add text to starting/end markers for how long to get to stop and destination
-                    startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "min to walk to bus stop");
+                    startOpt.snippet(df.format(g.getWalking_to_bus()) + " min to walk to bus stop.");
+                    destOpt.snippet("Destination");
                 }
             }else{
                 //if no buses available, tell user
                 Toast.makeText(getApplicationContext(), "No Buses Available", Toast.LENGTH_LONG).show();
+                finish();
             }
 
             //adds the markers to the map
             mMap.addMarker(startOpt);
             mMap.addMarker(destOpt);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startOpt.getPosition(),15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startOpt.getPosition(), 15));
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
     }

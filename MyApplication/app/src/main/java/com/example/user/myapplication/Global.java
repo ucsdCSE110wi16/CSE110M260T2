@@ -12,7 +12,8 @@ public class Global extends Application {
     private MarkerOptions start=null;
     private MarkerOptions end=null;
 
-    private int walking_to_bus=0;
+    private double walking_to_bus=0;
+    private double walking_speed=5;
 
     //where user gets on bus
     public void setStartMarker(MarkerOptions m) {start = m;}
@@ -39,10 +40,18 @@ public class Global extends Application {
     }
 
     //time to walk to bus stop
-    public int getWalking_to_bus(){
-        return walking_to_bus;
+    public double getWalking_to_bus(){
+        return walking_to_bus*((15-walking_speed)/10);
     }
     public void setWalking_to_bus(int d){
         this.walking_to_bus=d;
+    }
+
+    //walking speed
+    public void setWalking_speed(int d){
+        this.walking_speed=d;
+    }
+    public double getWalking_speed(){
+        return walking_speed;
     }
 }

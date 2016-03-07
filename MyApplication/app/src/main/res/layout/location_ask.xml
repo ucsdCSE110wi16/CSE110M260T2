@@ -53,7 +53,7 @@
                 android:ems="10"
                 android:id="@+id/Address"
                 android:inputType="text"
-                android:hint="Enter an Address"
+                android:hint="@string/Enter_bus_stop"
                 android:layout_below="@+id/auto_ucsd"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
@@ -73,7 +73,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Go"
+                android:text="@string/Go"
                 android:id="@+id/enter_ucsd"
                 android:layout_gravity="center_horizontal|top"
                 android:layout_below="@+id/destination"
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/destination"
-                android:hint="Destination"
+                android:hint="@string/Destination"
                 android:inputType="text"
                 android:ems="10"
                 android:layout_below="@+id/Address"
@@ -92,13 +92,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Find Stop"
-                android:id="@+id/findStopBut"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"/>
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
@@ -109,34 +102,64 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/enter_ucsd"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:weightSum="1"
-                android:layout_above="@+id/findStopBut">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/space"
+                android:id="@+id/relativeLayout2">
 
                 <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/stopID"
-                    android:hint="Enter Stop ID"
-                    android:layout_weight=".5"
-                    android:inputType="number"
-                    android:singleLine="true"
-                    android:maxLength="5" />
-
-                <EditText
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/routeID"
-                    android:hint="Enter Route #"
-                    android:layout_weight=".5"
-                    android:singleLine="true" />
+                    android:hint="@string/RouteID"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
 
-            </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/or"
+                    android:id="@+id/textView4"
+                    android:layout_gravity="center_vertical"
+                    android:layout_alignBaseline="@+id/routeID"
+                    android:layout_alignBottom="@+id/routeID"
+                    android:layout_centerHorizontal="true" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stopID"
+                    android:hint="@string/StopID"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:maxLength="5"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Find"
+                    android:id="@+id/findStopBut"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Find_bus_stop"
+                android:id="@+id/textView5"
+                android:layout_gravity="center_horizontal"
+                android:layout_above="@+id/relativeLayout2"
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
 
