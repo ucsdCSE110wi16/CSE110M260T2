@@ -1,6 +1,10 @@
 package com.example.user.myapplication;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -14,10 +18,10 @@ class MtsStop {
     public ArrayList<Route> routes;
 
     public MtsStop(double lat, double lon,String id,String name){
-        this.lat=lat;
+        this.lat=lat+30;
         this.lon=lon;
         this.id=id;
-        this.name=name;
+        this.name=name.substring(0,name.length()-1);
         routes=new ArrayList<Route>();
     }
 
@@ -26,6 +30,12 @@ class MtsStop {
     }
     public String string(){
         return(lat+","+lon+","+id+","+name);
+    }
+    public String getNameID(){
+        return name+" "+id;
+    }
+    public LatLng getLatLng(){
+        return new LatLng(lat,lon);
     }
 
     public Route addRoute(Route r){
@@ -82,22 +92,22 @@ class MtsStop {
         return routes.contains(r);
     }
 
+    public boolean routeEmpty(){
+        return routes.isEmpty();
+    }
+
+    public ArrayList getRouteList(){
+        return routes;
+    }
+
 }// end stop
 
 
 class Route{
-    private Queue<String> timeSort;
-    private List<String> times;
+        Date nextTime;
     String id;
     public Route(String id){
         this.id=id;
-        timeSort=new PriorityQueue<>();
-        times=new ArrayList<String>();
-    }
-
-
-    public void addTime(String time){
-        timeSort.add(time);
     }
 
     public Route clone(){
@@ -134,15 +144,12 @@ class Route{
         return id;
     }
 
-
-    public List getTimesList(){
-        return times;
-    }
-    public void finalizeList(){
-        for(String s:timeSort){
-            times.add(timeSort.poll());
-        }
+    public void setNextTime(java.util.Date nextTime) {
+        this.nextTime = nextTime;
     }
 
+    public java.util.Date getNextTime() {
+        return nextTime;
+    }
 }//end route
 

@@ -82,10 +82,10 @@ public class DirectionsJSONParser {
                                 g.setEndMarker(new MarkerOptions()
                                     .position(new LatLng(lat2,lon2))
                                     .title(name2)
-                                    .snippet("You will arrive at "+time2)
+                                    .snippet(x+" will reach destination at "+time2)
                                 );
-                                Log.d("JSON", " =departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
-                                Log.d("JSON"," =time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
+                                Log.d("JSON", "= departure stop lat lon: " + Double.toString(lat) + "," + Double.toString(lon));
+                                Log.d("JSON","= time and seconds since 1970: " + time + "=" + Integer.toString(timenum));
                             }
                             Log.d("JSON", "bus route: "+x);
                             Log.d("JSON","walk time to stop: "+Integer.toString(timetoStop));
