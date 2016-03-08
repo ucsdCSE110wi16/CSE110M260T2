@@ -79,7 +79,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="129dp">
+            android:layout_height="63dp">
 
             <ImageView
                 android:layout_width="wrap_content"

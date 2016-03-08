@@ -84,6 +84,7 @@ public class WalkActivity extends AppCompatActivity {
                 Global g=(Global)getApplication();
                 g.setData_bus_kind(busKind);
                 g.setData_method(method);
+                g.setWalking_speed(speed.getProgress());
             }
         });
     }
