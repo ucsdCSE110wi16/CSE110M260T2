@@ -4,6 +4,7 @@ import android.util.Log;
 import org.json.JSONObject;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.logging.*;
 
 /**
@@ -15,33 +16,41 @@ public class JSONHtmlParser
 
     private String formatJSON(StringBuilder sb)
     {
-        if (sb.charAt(0) == '[')
+        for (int i = 0; i < sb.length(); i++)
         {
-            sb.deleteCharAt(0);
-            sb.insert(0, '{');
-        }
-        if (sb.charAt(sb.length()-2) == ']')
-        {
-            sb.insert(sb.length()-2, '}');
-            sb.deleteCharAt(sb.length()-2);
-        }
-        if (sb.charAt(1) == '[')
-        {
-            sb.deleteCharAt(1);
-        }
-        if (sb.charAt(sb.length()-3) == ']')
-        {
-            sb.deleteCharAt(sb.length()-3);
+            if (sb.charAt(i) == '[')
+            {
+                sb.deleteCharAt(i);
+                sb.insert(i, '{');
+            }
+            else if (sb.charAt(i) == ']')
+            {
+                sb.deleteCharAt(i);
+                sb.insert(i, '}');
+            }
         }
 
-        int number = 1;
+        int index = 0;
+        int[] numbers = new int[64];
+        boolean dec = false;
+        for (int i = 0; i < 64; i ++)
+        {
+            numbers[i] = 1;
+        }
         for (int i = 1; i < sb.length()-2; i++)
         {
             if (sb.charAt(i) == '{' && sb.charAt(i-1) != ':')
             {
-                String prefix = new Integer(number++).toString();
+                String prefix = new Integer(numbers[index]++).toString();
                 sb.insert(i, "\"" + prefix + "\":");
                 i+=4;
+                index++;
+                dec = true;
+            }
+            else if (sb.charAt(i) == '}' && dec)
+            {
+                dec = false;
+                index--;
             }
         }
         return sb.toString();

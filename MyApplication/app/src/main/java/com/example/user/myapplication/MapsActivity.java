@@ -1,6 +1,8 @@
 package com.example.user.myapplication;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -11,6 +13,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -21,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -32,9 +39,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class MapsActivity extends FragmentActivity  {
 
@@ -55,30 +67,12 @@ public class MapsActivity extends FragmentActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_maps);
-
-
-        //setUpMTSStops();
-        //MtsStop usage?
-        //test();
-        Global g = (Global) getApplication();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
+         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setUpMapIfNeeded();
-
-
     }
-
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-
 
     // ***************************************************************************
     // This is the code that reads creates MTSbusstop stuff
@@ -87,25 +81,7 @@ public class MapsActivity extends FragmentActivity  {
     // ****************************************************************************
     /*
     //*******************************************************************************/
-    private void test(){
-        Log.d("MTS STOPS", Integer.toString(stops.size()));
-        //Search route or stop from stopID/routeID by making new stop/route with id
-        Log.d("MTS STOPS","finds stop from a stop(MtsStop): "+Boolean.toString(stops.contains(new MtsStop("11151"))));
-        if(stops.contains(new MtsStop("11151"))){
-            MtsStop temp= (MtsStop)stops.get(stops.indexOf(new MtsStop("11151")));
-            if(temp==null){
-                Log.d("MTS_STOPS","stop is null");
-            }else {
-                Log.d("MTS_STOPS", temp.getID());
-                for (Route r : temp.routes) {
-                    Log.d("MTS_STOPS", "routeid " + r.getID());
-
-                }
-            }
-            Log.d("MTS STOPS",Boolean.toString(temp.contains(new Route("202"))));
-        }
-    }
-    private void setUpMTSStops() {
+        private void setUpMTSStops(String stop, String route) {
         String line=null;
         String lat=null, lon=null, code=null,name=null;
         String routeID=null,time=null;
@@ -124,8 +100,7 @@ public class MapsActivity extends FragmentActivity  {
             MtsStop s=null;
             Route r;
             while (( line = bRead.readLine()) != null) {
-
-
+                //if line with stop informatiom
                 if(line.contains("+")) {
                     last = line.indexOf(",");
                     //finds lattitude
@@ -148,29 +123,62 @@ public class MapsActivity extends FragmentActivity  {
                     latNum = Double.parseDouble(lat);
                     lonNum = Double.parseDouble(lon);
                     //creates new stop
-
-                    s=new MtsStop(latNum,lonNum,code,name);
-                    stops.add(s);
+                    if(code.equals(stop) || stop.equals("")) {
+                        s = new MtsStop(latNum, lonNum, code, name);
+                        stops.add(s);
+                        Log.d("STOP", "added stop " + code);
+                    }else{
+                        s=null;
+                    }
                 }else if (line.contains("_")){
+                    //for lines with route/times
                     last=line.indexOf("_");
                     routeID=line.substring(0, last);
 
-                    r=new Route(routeID);
-                    //if (routeID.equals("202")) {
+
+                    if ((routeID.equals(route)|| route.equals(""))&& s!=null) {
+                        r=new Route(routeID);
+                        PriorityQueue<String> pq=new PriorityQueue<String>();
                         while (last < line.length() - 1) {
-                            index = last;
-                            last = line.indexOf(",", index + 1);
-                            time = line.substring(index + 1, last);
+                            index = last+1;
+                            last = line.indexOf(",", index);
+                            time = line.substring(index , last);
                             //adds into priority queue to be sorted
-                            r.addTime(time);
-                            count++;
+                            //Log.d("TIME",time);
+                            pq.add(time);
+
+                        }
+                        Log.d("ROUTE","added route "+routeID);
+                        //gets time from current time
+                        GregorianCalendar current=new GregorianCalendar();
+                        long currentTime=current.getTimeInMillis();
+                        Date currentDate=current.getTime();
+
+                        while(pq.peek()!=null) {
+                            String temp=pq.poll();
+                            int start=temp.indexOf(":");
+                            //gets hour of next bus times
+                            int hour=Integer.parseInt(temp.substring(0, start).trim());
+                            //gets minute of next bus times
+                            int minute=Integer.parseInt(temp.substring(start+1,temp.indexOf(":",start+1)).trim());
+                            //creates new calendar/date of the next bus times
+                            GregorianCalendar busCalendar=new GregorianCalendar(current.get(Calendar.YEAR),
+                                    current.get(Calendar.MONTH),current.get(Calendar.DAY_OF_MONTH),
+                                    hour,minute);
+                            Date next=(busCalendar.getTime());
+                            if(next.after(currentDate)){
+                                //if bus time is after current date
+                                r.setNextTime(next);
+                                s.addRoute(r);
+                                break;
+                            }
 
                         }
                         //when done adding times, adds to final list
                         //Log.d("MTS", Integer.toString(count));
-                        r.finalizeList();
-                        s.addRoute(r);
-                    //}
+                        //r.finalizeList();
+
+                    }
 
 
                 }
@@ -183,6 +191,12 @@ public class MapsActivity extends FragmentActivity  {
     }
 
     //******************************************************************
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p/>
+     * This should only be called once and when we are sure that {@link #mMap} is not null.
+     */
     private void setUpMap(){
 
         Global g = (Global)getApplication();
@@ -267,9 +281,129 @@ public class MapsActivity extends FragmentActivity  {
             }
         }else if(g.getData_method().equals("id")){
             //use stop or route number to get bus stop
+            String route, stop;
+
+            if(extras!=null){
+                route=extras.getString("routeID");
+                stop=extras.getString("stopID");
+                setUpMTSStops(stop,route);
+            }
+            if(stops.isEmpty()) {
+                //if no stops found
+                Toast.makeText(this,"No stops found",Toast.LENGTH_SHORT);
+
+                this.finish();
+            }else{
+                MtsStop closest=null;
+                float dist=Float.MAX_VALUE;
+                float[] result=new float[3];
+                ArrayList<MarkerOptions> optList=new ArrayList<>();
+                LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+                // Create a criteria object to retrieve provider
+                Criteria criteria = new Criteria();
+                // Get the name of the best provider
+                String provider = locationManager.getBestProvider(criteria, true);
+                // Get Current Location
+                Location myLocation = null;
+                try {
+                    myLocation = locationManager.getLastKnownLocation(provider);
+                    mMap.setMyLocationEnabled(true);
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
+                }
+                if (myLocation==null){
+                    Toast.makeText(this, "Location could not be found", Toast.LENGTH_SHORT).show();
+                }
+
+                for (MtsStop s : stops) {
+                    if (s.routeEmpty()){
+                        //if no routes or specified route does not stop here
+                    }else{
+                        if(myLocation!=null) {
+                            Location.distanceBetween(myLocation.getLatitude(), myLocation.getLongitude(),
+                                    s.getLatLng().latitude, s.getLatLng().longitude, result);
+                            if (result[0] < dist) {
+                                dist = result[0];
+                                closest = s;
+                            }
+                        }
+                        String markerSnip="";
+                        boolean first=true;
+                        for(Route r:((ArrayList<Route>)s.getRouteList())) {
+                            if (!first) {
+                                markerSnip+="\n"+r.getID()+" arrives at "+r.getNextTime().toString().substring(11,16);
+                            }else{
+                                markerSnip+=r.getID()+" arrives at "+r.getNextTime().toString().substring(11,16);
+                                first=false;
+                            }
+
+                        }
+                        optList.add(new MarkerOptions()
+                                        .title(s.getNameID())
+                                        .position(s.getLatLng())
+                                        .snippet(markerSnip)
+                        );
+
+                        //For multiline snippets, if there are multiple routes
+                        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                            @Override
+                            public View getInfoWindow(Marker arg0) {
+                                return null;
+                            }
+
+                            @Override
+                            public View getInfoContents(Marker marker) {
+                                Context mContext=(Context)getApplicationContext();
+
+                                LinearLayout info = new LinearLayout(mContext);
+                                info.setOrientation(LinearLayout.VERTICAL);
+
+                                TextView title = new TextView(mContext);
+                                title.setTextColor(Color.BLACK);
+                                title.setGravity(Gravity.CENTER);
+                                title.setTypeface(null, Typeface.BOLD);
+                                title.setText(marker.getTitle());
+
+                                TextView snippet = new TextView(mContext);
+                                snippet.setTextColor(Color.GRAY);
+                                snippet.setText(marker.getSnippet());
+
+                                info.addView(title);
+                                info.addView(snippet);
+
+                                return info;
+                            }
+                        });
+
+                    }
+                }
+                if(optList.isEmpty()){
+                    Toast.makeText(this, "Route could not be found", Toast.LENGTH_LONG).show();
+                    this.finish();
+                }
+                if(closest!=null) {
+                    for (MarkerOptions m : optList) {
+                        if (m.getTitle().equals(closest.getNameID())) {
+                            m.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        }
+                        mMap.addMarker(m);
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closest.getLatLng(), 14));
+
+                }else{
+                    for (MarkerOptions m : optList) {
+                        mMap.addMarker(m);
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.8810, -117.2380), 13));
+
+                }
+            }
         }
-
-
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
     }
 
     private MarkerOptions getMarkerOpt(String s, int color){
@@ -285,8 +419,8 @@ public class MapsActivity extends FragmentActivity  {
         }
 
         if(list.isEmpty()){
-            Toast.makeText(this, "Location not found.", Toast.LENGTH_SHORT).show();
-            this.finish();
+            Toast.makeText(this, "Destination location not found.", Toast.LENGTH_SHORT).show();
+            finish();
         }
         else{
             Address add = list.get(0);
@@ -537,7 +671,13 @@ public class MapsActivity extends FragmentActivity  {
             }
 
             // Drawing polyline in the Google Map for the i-th route
-            mMap.addPolyline(lineOptions);
+            try{
+                mMap.addPolyline(lineOptions);
+            }
+            catch (NullPointerException e){
+                Toast.makeText(getApplicationContext(), "No Route Between Points ", Toast.LENGTH_SHORT).show();
+                finish();
+            }
 
             Global g = (Global) getApplication();
             //if there is a bus available
@@ -545,19 +685,23 @@ public class MapsActivity extends FragmentActivity  {
                 //add bus stop to map
                 mMap.addMarker(g.getStartMarker());
                 mMap.addMarker(g.getEndMarker());
+                DecimalFormat df = new DecimalFormat("#.#");
+                DecimalFormat df2 = new DecimalFormat("#");
                 if(startOpt!=null && destOpt!=null){
                     //add text to starting/end markers for how long to get to stop and destination
-                    startOpt.snippet(Integer.toString(g.getWalking_to_bus()) + "m to walk to bus stop");
+                    startOpt.snippet(df.format(g.getWalking_to_bus()) + " min to walk to bus stop.");
+                    destOpt.snippet("Destination");
                 }
             }else{
                 //if no buses available, tell user
                 Toast.makeText(getApplicationContext(), "No Buses Available", Toast.LENGTH_LONG).show();
+                finish();
             }
 
             //adds the markers to the map
             mMap.addMarker(startOpt);
             mMap.addMarker(destOpt);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startOpt.getPosition(),15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startOpt.getPosition(), 15));
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
     }

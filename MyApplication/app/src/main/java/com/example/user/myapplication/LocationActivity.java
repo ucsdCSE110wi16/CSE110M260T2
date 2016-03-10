@@ -2,25 +2,17 @@ package com.example.user.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
-import java.io.IOException;
-import java.util.List;
 
 public class LocationActivity extends AppCompatActivity {
     //google maps key
@@ -57,9 +49,13 @@ public class LocationActivity extends AppCompatActivity {
 
         final EditText address= (EditText) findViewById(R.id.Address);
         final EditText dest= (EditText) findViewById(R.id.destination);
+        dest.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        final EditText stopid= (EditText) findViewById(R.id.stopID);
+        final EditText routeid= (EditText) findViewById(R.id.routeID);
         addEditorAction(address);
         addEditorAction(dest);
-
+        addEditorAction(routeid);
+        addEditorAction(stopid);
 
 
     }
@@ -108,7 +104,7 @@ public class LocationActivity extends AppCompatActivity {
                 String address_enter = address.getText().toString();
                 String dest_address = destination.getText().toString();
 
-                if (address_enter.matches("")||dest_address.matches("")) {
+                if (address_enter.matches("")&& dest_address.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an address.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -134,7 +130,7 @@ public class LocationActivity extends AppCompatActivity {
                 EditText routeid=(EditText)findViewById(R.id.routeID);
                 String stopIDText=stopid.getText().toString();
                 String routeText=routeid.getText().toString();
-                if (routeText.matches("")||routeText.matches("")) {
+                if (stopIDText.matches("") && routeText.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an Route # or Stop ID.", Toast.LENGTH_SHORT).show();
                 }else {
                     Intent intent = new Intent(context, MapsActivity.class);

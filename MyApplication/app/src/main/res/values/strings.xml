@@ -4,8 +4,8 @@
     <string name="ucsd_image_button">ucsd image button</string>
     <string name="MTS_image_button">MTS image button</string>
     <string name="UCSD_title">UCSD</string>
-    <string name="ask_string">Choose your current location:</string>
-    <string name="Enter_bus_stop">Enter an address:</string>
+    <string name="ask_string">Choose your starting location and destination:</string>
+    <string name="Enter_bus_stop">Enter your starting address:</string>
     <string name="Auto_bus_stop">Use my current location:</string>
     <string name="or">OR</string>
     <string name="UCSD_title_choose">UCSD</string>
@@ -19,4 +19,10 @@
 
     <string name="google_app_id">1008155422772</string>
     <string name="pin">pin</string>
+    <string name="Destination">Enter your destination address:</string>
+    <string name="Find_bus_stop">Find the bus stop around you:</string>
+    <string name="Find">Find Stop</string>
+    <string name="StopID">Enter Stop ID</string>
+    <string name="RouteID">Enter Route #</string>
+    <string name="Go">Go</string>
 </resources>
