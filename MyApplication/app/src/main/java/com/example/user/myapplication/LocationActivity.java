@@ -20,7 +20,7 @@ public class LocationActivity extends AppCompatActivity {
 
     //choose location based on current or address
 
-    Button auto_button,enter_button,route_button;
+    Button auto_button, enter_button, route_button;
 
 
     @Override
@@ -29,29 +29,28 @@ public class LocationActivity extends AppCompatActivity {
         setContentView(R.layout.location_ask);
         addListenerOnButton();
 
-        Global g = (Global)getApplication();
+        Global g = (Global) getApplication();
 
 
-        if(g.getData_bus_kind()=="MTS"){
-            String text= "MTS";
-            TextView title = (TextView)findViewById(R.id.ask_bus_type);
+        if (g.getData_bus_kind() == "MTS") {
+            String text = "MTS";
+            TextView title = (TextView) findViewById(R.id.ask_bus_type);
             title.setText(text);
-            ImageView img= (ImageView) findViewById(R.id.location_choice);
+            ImageView img = (ImageView) findViewById(R.id.location_choice);
             img.setImageResource(R.drawable.mts);
-        }
-        else{
-            String text= "UCSD";
-            TextView title = (TextView)findViewById(R.id.ask_bus_type);
+        } else {
+            String text = "UCSD";
+            TextView title = (TextView) findViewById(R.id.ask_bus_type);
             title.setText(text);
-            ImageView img= (ImageView) findViewById(R.id.location_choice);
+            ImageView img = (ImageView) findViewById(R.id.location_choice);
             img.setImageResource(R.drawable.ucsd);
         }
 
-        final EditText address= (EditText) findViewById(R.id.Address);
-        final EditText dest= (EditText) findViewById(R.id.destination);
+        final EditText address = (EditText) findViewById(R.id.Address);
+        final EditText dest = (EditText) findViewById(R.id.destination);
         dest.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        final EditText stopid= (EditText) findViewById(R.id.stopID);
-        final EditText routeid= (EditText) findViewById(R.id.routeID);
+        final EditText stopid = (EditText) findViewById(R.id.stopID);
+        final EditText routeid = (EditText) findViewById(R.id.routeID);
         addEditorAction(address);
         addEditorAction(dest);
         addEditorAction(routeid);
@@ -60,7 +59,7 @@ public class LocationActivity extends AppCompatActivity {
 
     }
 
-    public void addEditorAction(EditText e){
+    public void addEditorAction(EditText e) {
         e.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId,
@@ -80,12 +79,12 @@ public class LocationActivity extends AppCompatActivity {
         final Context context = this;
         auto_button = (Button) findViewById(R.id.auto_ucsd);
         enter_button = (Button) findViewById(R.id.enter_ucsd);
-        route_button=(Button)findViewById(R.id.findStopBut);
+        route_button = (Button) findViewById(R.id.findStopBut);
 
         auto_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                EditText address=(EditText)findViewById(R.id.Address);
+                EditText address = (EditText) findViewById(R.id.Address);
             /*Intent intent = new Intent(context, MapsActivity.class);
             startActivity(intent);
             Global g = (Global) getApplication();
@@ -99,12 +98,12 @@ public class LocationActivity extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 EditText address = (EditText) findViewById(R.id.Address);
-                EditText destination= (EditText)findViewById(R.id.destination);
+                EditText destination = (EditText) findViewById(R.id.destination);
 
                 String address_enter = address.getText().toString();
                 String dest_address = destination.getText().toString();
 
-                if (address_enter.matches("")&& dest_address.matches("")) {
+                if (address_enter.matches("") && dest_address.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an address.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -113,7 +112,7 @@ public class LocationActivity extends AppCompatActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putString("address_entered", address_enter);
-                bundle.putString("destination",dest_address);
+                bundle.putString("destination", dest_address);
                 intent.putExtras(bundle);
 
 
@@ -123,23 +122,23 @@ public class LocationActivity extends AppCompatActivity {
             }
         });
 
-        route_button.setOnClickListener(new View.OnClickListener(){
+        route_button.setOnClickListener(new View.OnClickListener() {
             @Override
-        public void onClick(View v){
-                EditText stopid=(EditText)findViewById(R.id.stopID);
-                EditText routeid=(EditText)findViewById(R.id.routeID);
-                String stopIDText=stopid.getText().toString();
-                String routeText=routeid.getText().toString();
+            public void onClick(View v) {
+                EditText stopid = (EditText) findViewById(R.id.stopID);
+                EditText routeid = (EditText) findViewById(R.id.routeID);
+                String stopIDText = stopid.getText().toString();
+                String routeText = routeid.getText().toString();
                 if (stopIDText.matches("") && routeText.matches("")) {
                     Toast.makeText(LocationActivity.this, "You did not enter an Route # or Stop ID.", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     Intent intent = new Intent(context, MapsActivity.class);
 
                     Bundle bundle = new Bundle();
                     bundle.putString("stopID", stopIDText);
                     bundle.putString("routeID", routeText);
                     intent.putExtras(bundle);
-                    Global g=(Global)getApplication();
+                    Global g = (Global) getApplication();
                     g.setData_method("id");
 
 

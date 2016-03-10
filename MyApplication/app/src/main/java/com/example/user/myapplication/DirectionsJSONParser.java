@@ -28,6 +28,7 @@ public class DirectionsJSONParser {
         JSONArray jLegs = null;
         JSONArray jSteps = null;
         boolean busFound=false;
+        boolean isMTSorNCTD=false;
         int timetoStop=0;
 
         try {
@@ -50,6 +51,9 @@ public class DirectionsJSONParser {
 
 
                         if( ((JSONObject)jSteps.get(k)).has("transit_details")){
+                            //check if "MTS" or "North County Transit District"
+
+
                             String x, time,time2,name,name2;
                             double lat=0,lon=0,lat2=0,lon2=0;
                             Integer timenum=0;
@@ -62,16 +66,23 @@ public class DirectionsJSONParser {
                             //lat lon of bus stop to get on
                             lat=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lat"));
                             lon=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").getJSONObject("location").get("lng"));
+                            //lat lon of bus stop to get off
                             lat2=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_stop").getJSONObject("location").get("lat"));
                             lon2=(Double)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_stop").getJSONObject("location").get("lng"));
                             //time as string ex=10:59am
                             time=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("text"));
                             time2=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_time").get("text"));
+                            //name of the stop
                             name=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_stop").get("name"));
                             name2=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("arrival_stop").get("name"));
                             //time as seconds since Jan 1, 1970
                             //timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
                             if(lat!=0 && lon!=0 && !busFound) {
+
+                                String company=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("line").getJSONObject("agencies").get("name"));
+                                if (company.equals("MTS") || company.equals("North County Transit District")){
+                                    isMTSorNCTD=true;
+                                }
                                 //if found bus stop lat long, create marker for it
                                 g.setStartMarker(new MarkerOptions()
                                     .position(new LatLng(lat, lon))
@@ -120,8 +131,12 @@ public class DirectionsJSONParser {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        return routes;
+        //if bus stop found is not mts/nctd(101) return empty list to be found and error caught
+        if(isMTSorNCTD) {
+            return routes;
+        }else{
+            return new ArrayList<>();
+        }
     }
     /**
      * Method to decode polyline points
