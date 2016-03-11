@@ -1,11 +1,13 @@
-package com.sd_commute;
+package com.example.user.myapplication;
 
-import android.util.Log;
-import org.json.JSONObject;
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.logging.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * http://stackoverflow.com/questions/10500775/parse-json-from-httpurlconnection-object

@@ -1,9 +1,11 @@
-package com.sd_commute;
+package com.example.user.myapplication;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import org.json.*;
-import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
