@@ -400,7 +400,7 @@ public class MapsActivity extends FragmentActivity {
                             mMap.addMarker(m);
                         }
                         //default centered on UCSD
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.8810, -117.2380), 9));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32.8810, -117.2380), 12));
 
                     }
                 }

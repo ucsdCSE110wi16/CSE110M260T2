@@ -79,7 +79,8 @@ public class DirectionsJSONParser {
                             //timenum=(Integer)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("departure_time").get("value"));
                             if(lat!=0 && lon!=0 && !busFound) {
 
-                                String company=(String)(((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("line").getJSONObject("agencies").get("name"));
+                                String company=(String)((JSONObject)((JSONObject)jSteps.get(k)).getJSONObject("transit_details").getJSONObject("line").getJSONArray("agencies").get(0)).get("name");
+                                Log.d("BUS COMPANY",company);
                                 if (company.equals("MTS") || company.equals("North County Transit District")){
                                     isMTSorNCTD=true;
                                 }
