@@ -156,6 +156,7 @@ public class UCSDBus extends AsyncTask<String, Void, String>
 
         private String stopName;
         private int rtpiNumber;
+
         public UCSDBusStop(int stopID, Coordinate coordinate,
                            String stopName, int rtpiNumber)
         {
@@ -167,21 +168,21 @@ public class UCSDBus extends AsyncTask<String, Void, String>
 
             arrivals = new ArrayList<UCSDArrival>();
             String arrivalsJSON = htmlParser.getJSON("http://www.ucsdbus.com/Stop/"
-                    + new Integer(stopID).toString() + "/Arrivals");
+                    +  Integer.toString(stopID) + "/Arrivals");
 
             try
             {
                 JSONObject arrivalsParser = new JSONObject(arrivalsJSON);
 
                 int number = 1;
-                while (arrivalsParser.has(new Integer (number).toString()))
+                while (arrivalsParser.has( Integer.toString(number)))
                 {
                     int numberAlt = 1;
-                    JSONObject curArrival = arrivalsParser.getJSONObject(new Integer (number++).toString());
+                    JSONObject curArrival = arrivalsParser.getJSONObject(Integer.toString (number++));
                     curArrival = curArrival.getJSONObject("Arrivals");
-                    while (curArrival.has(new Integer (numberAlt).toString()))
+                    while (curArrival.has(Integer.toString(numberAlt)))
                     {
-                        JSONObject curArrivalAlt = curArrival.getJSONObject(new Integer (numberAlt++).toString());
+                        JSONObject curArrivalAlt = curArrival.getJSONObject(Integer.toString(numberAlt++));
                         this.arrivals.add(new UCSDArrival(curArrivalAlt.getInt("RouteID"),
                                 curArrivalAlt.getDouble("SecondsToArrival")));
                     }
@@ -192,7 +193,7 @@ public class UCSDBus extends AsyncTask<String, Void, String>
                 Log.d("Android : ", "Failed to parse vehicle JSON!!!");
             }
         }
-    }
+    }//end ucsd stop
 
     class UCSDBusRoute
     {
@@ -313,11 +314,12 @@ public class UCSDBus extends AsyncTask<String, Void, String>
         {
             return name;
         }
-    }
+    }//end ucsdbusroute
 
     ArrayList<UCSDBusRoute> routes;
     final int totalNumStops = 15;
 
+    @Override
     protected String doInBackground(String... s)
     {
         Log.d("Android : ", "Getting UCSD Bus info in background!");
@@ -347,7 +349,10 @@ public class UCSDBus extends AsyncTask<String, Void, String>
     {}
 
     protected void onPostExecute(String result)
-    {}
+    {
+
+        Log.d("TEST COORD",getNearestStop(new Coordinate(0,0)).getStopName());
+    }
 
     public double getSecondsToArrival(UCSDBusStop stop, UCSDBusRoute route)
     {
@@ -367,6 +372,7 @@ public class UCSDBus extends AsyncTask<String, Void, String>
 
         for (int i = 0; i < routes.size(); i++)
         {
+            Log.d("UCSD BUs","HERE");
             for (int j = 0; j < routes.get(i).stops.size(); j++)
             {
                 UCSDBusStop curStop = routes.get(i).stops.get(j);

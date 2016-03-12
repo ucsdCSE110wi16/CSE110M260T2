@@ -238,8 +238,7 @@ public class MapsActivity extends FragmentActivity {
                         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
                         LocationListener locationListener = new MyLocationListener();
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
 
                         // Create a criteria object to retrieve provider
                         Criteria criteria = new Criteria();
@@ -247,9 +246,11 @@ public class MapsActivity extends FragmentActivity {
                         String provider = locationManager.getBestProvider(criteria, true);
                         // Get Current Location
                         Location myLocation = null;
+                        //checks if location permission allowed
                         try {
                             myLocation = locationManager.getLastKnownLocation(provider);
                             mMap.setMyLocationEnabled(true);
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
                         } catch (SecurityException e) {
                             e.printStackTrace();
                             Toast.makeText(this, "Location services not enabled", Toast.LENGTH_LONG).show();
@@ -451,6 +452,7 @@ public class MapsActivity extends FragmentActivity {
                     }
                 }
             }
+            //end MTS bus setup
         }else if(g.getData_bus_kind().equals("UCSD")){
             //TODO UCSD bus find
             if (extras != null) {
@@ -523,13 +525,8 @@ public class MapsActivity extends FragmentActivity {
             test=new UCSDBus();
             test.execute();
             UCSDBus.Coordinate c=new UCSDBus().new Coordinate(0,0);
-
-
-
-        }
-
-
-
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startOpt.getPosition(), 13));
+        }//end ucsd bus setup
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
     }

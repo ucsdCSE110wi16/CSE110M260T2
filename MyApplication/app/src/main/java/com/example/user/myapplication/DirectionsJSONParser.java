@@ -91,7 +91,7 @@ public class DirectionsJSONParser {
                                 g.setStartMarker(new MarkerOptions()
                                     .position(new LatLng(lat, lon))
                                     .title(name)
-                                    .snippet(x + " arrivedfgfs: " + time)
+                                    .snippet(x + " arrives: " + time)
                                 );
 
 
@@ -101,7 +101,7 @@ public class DirectionsJSONParser {
                                     Date date = format.parse(time);
                                     g.setArriveTime(date);
                                 } catch (ParseException e) {
-                                    // TODO Auto-generated catch block
+
                                 }
 
                                 g.setBusNum(x);
