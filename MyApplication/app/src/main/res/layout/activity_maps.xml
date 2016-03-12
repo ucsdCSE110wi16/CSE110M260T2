@@ -25,6 +25,12 @@
     </LinearLayout>
     -->
 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -32,5 +38,15 @@
         android:id="@+id/map"
         tools:context="com.example.user.myapplication.MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <Button
+        android:id="@+id/plantrip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/MapButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
 
 <!--</LinearLayout>-->

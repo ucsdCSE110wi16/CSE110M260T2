@@ -1,7 +1,10 @@
 package com.example.user.myapplication;
 
 import android.app.Application;
+
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.Date;
 
 /**
  * Created by User on 2/20/2016.
@@ -14,6 +17,11 @@ public class Global extends Application {
 
     private double walking_to_bus=0;
     private double walking_speed=5;
+
+    private String busnum;
+    private String stopname;
+
+    private Date arrivetime;
 
     //where user gets on bus
     public void setStartMarker(MarkerOptions m) {start = m;}
@@ -53,5 +61,29 @@ public class Global extends Application {
     }
     public double getWalking_speed(){
         return walking_speed;
+    }
+
+    //Bus number
+    public void setBusNum(String d){
+        this.busnum=d;
+    }
+    public String getBusNum(){
+        return busnum;
+    }
+
+    //Stop name
+    public void setStopName(String d){
+        this.stopname=d;
+    }
+    public String getStopName(){
+        return stopname;
+    }
+
+    //Arriving time
+    public void setArriveTime(Date d){
+        this.arrivetime=d;
+    }
+    public Date getArriveTime(){
+        return arrivetime;
     }
 }

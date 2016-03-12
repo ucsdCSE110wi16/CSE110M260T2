@@ -13,9 +13,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class DirectionsJSONParser {
 
@@ -87,8 +91,21 @@ public class DirectionsJSONParser {
                                 g.setStartMarker(new MarkerOptions()
                                     .position(new LatLng(lat, lon))
                                     .title(name)
-                                    .snippet(x + " arrives: " + time)
+                                    .snippet(x + " arrivedfgfs: " + time)
                                 );
+
+
+
+                                SimpleDateFormat format = new SimpleDateFormat("hh:mmaa", Locale.US);
+                                try {
+                                    Date date = format.parse(time);
+                                    g.setArriveTime(date);
+                                } catch (ParseException e) {
+                                    // TODO Auto-generated catch block
+                                }
+
+                                g.setBusNum(x);
+                                g.setStopName(name);
                                 //sets arrival time of bus to destination
                                 g.setEndMarker(new MarkerOptions()
                                     .position(new LatLng(lat2,lon2))

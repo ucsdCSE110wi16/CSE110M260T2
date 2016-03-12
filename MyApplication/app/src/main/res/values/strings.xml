@@ -25,4 +25,6 @@
     <string name="StopID">Enter Stop ID</string>
     <string name="RouteID">Enter Route #</string>
     <string name="Go">Go</string>
+    <string name="MapButton">Plan trip!</string>
+    <string name="currentTime">Current Time:</string>
 </resources>
