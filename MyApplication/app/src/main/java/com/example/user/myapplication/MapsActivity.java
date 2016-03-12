@@ -472,7 +472,14 @@ public class MapsActivity extends FragmentActivity {
                 }
                 mMap.addMarker(startOpt);
                 mMap.addMarker(destOpt);
-            }
+            }//end setting up location
+            UCSDBus test;
+            test=new UCSDBus();
+            test.execute();
+            UCSDBus.Coordinate c=new UCSDBus().new Coordinate(0,0);
+
+
+
         }
 
 
