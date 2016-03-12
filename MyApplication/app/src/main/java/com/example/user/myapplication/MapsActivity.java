@@ -1,12 +1,14 @@
 package com.example.user.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,12 +43,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.PriorityQueue;
 
 public class MapsActivity extends FragmentActivity {
@@ -62,6 +68,7 @@ public class MapsActivity extends FragmentActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    Button plantrip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,7 @@ public class MapsActivity extends FragmentActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setUpMapIfNeeded();
+        addListenerOnButton();
     }
 
     // ***************************************************************************
@@ -86,6 +94,8 @@ public class MapsActivity extends FragmentActivity {
         String routeID = null, time = null;
         double latNum, lonNum;
         int index = 0, last = 0;
+        boolean flag = false;
+        Global g = (Global) getApplication();
 
 
         try {
@@ -126,9 +136,11 @@ public class MapsActivity extends FragmentActivity {
                         s = new MtsStop(latNum, lonNum, code, name);
                         stops.add(s);
                         Log.d("STOP", "added stop " + code);
+                        flag = true;
                     } else {
                         s = null;
                     }
+
                 } else if (line.contains("_")) {
                     //for lines with route/times
                     last = line.indexOf("_");
@@ -182,6 +194,10 @@ public class MapsActivity extends FragmentActivity {
 
                 }
             }
+
+            if(!flag){
+                Toast.makeText(this, "Stop not found.", Toast.LENGTH_SHORT).show();
+            }
             //Log.d("MTS",Integer.toString(count));
         } catch (IOException e) {
             Log.e("ERROR", "ERROR READING MTS STOPS");
@@ -221,6 +237,10 @@ public class MapsActivity extends FragmentActivity {
                         List l = null;
                         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+                        LocationListener locationListener = new MyLocationListener();
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
                         // Create a criteria object to retrieve provider
                         Criteria criteria = new Criteria();
                         // Get the name of the best provider
@@ -237,7 +257,7 @@ public class MapsActivity extends FragmentActivity {
 
                         if (myLocation == null) {
                             Log.d("LOCATION", "location was null");
-                            Toast.makeText(this, "Current Location not found.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Location service unavailable.", Toast.LENGTH_SHORT).show();
                             this.finish();
                         } else {
                             try {
@@ -316,6 +336,7 @@ public class MapsActivity extends FragmentActivity {
                     }
                     if (myLocation == null) {
                         Toast.makeText(this, "Location could not be found", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
 
                     for (MtsStop s : stops) {
@@ -337,6 +358,18 @@ public class MapsActivity extends FragmentActivity {
                                     markerSnip += "\n" + r.getID() + " arrives at " + r.getNextTime().toString().substring(11, 16);
                                 } else {
                                     markerSnip += r.getID() + " arrives at " + r.getNextTime().toString().substring(11, 16);
+                                    g.setBusNum(r.getID());
+
+                                    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                                    try {
+                                        Date date = format.parse(r.getNextTime().toString().substring(11, 16));
+                                        g.setArriveTime(date);
+                                    } catch (ParseException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                    g.setWalking_to_bus(0);
+
                                     first = false;
                                 }
 
@@ -389,6 +422,19 @@ public class MapsActivity extends FragmentActivity {
                         for (MarkerOptions m : optList) {
                             if (m.getTitle().equals(closest.getNameID())) {
                                 m.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                g.setStopName(closest.getNameID().substring(0, closest.getNameID().length() - 6));
+
+                                Route r = (Route)closest.getRouteList().get(0);
+
+                                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                                try {
+                                    Date date = format.parse(r.getNextTime().toString().substring(11, 16));
+                                    g.setArriveTime(date);
+                                } catch (ParseException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+                                g.setWalking_to_bus(0);
                             }
                             mMap.addMarker(m);
                         }
@@ -493,38 +539,43 @@ public class MapsActivity extends FragmentActivity {
             e.printStackTrace();
         }
 
-        if (list.isEmpty()) {
-            Toast.makeText(this, "Destination location not found.", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Address add = list.get(0);
-            double latitude = add.getLatitude();
-            double longitude = add.getLongitude();
+        try{
+            if (list.isEmpty()) {
+                Toast.makeText(this, "Invalid address.", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Address add = list.get(0);
+                double latitude = add.getLatitude();
+                double longitude = add.getLongitude();
 
-            String address_line = add.getAddressLine(0);
+                String address_line = add.getAddressLine(0);
 
-            point = new LatLng(latitude, longitude);
+                point = new LatLng(latitude, longitude);
 
-            if (color == 0) {
-                return (new MarkerOptions()
-                        .position(point)
-                        .draggable(true)
-                        .title(address_line)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-            } else if (color == 1) {
-                return (new MarkerOptions()
-                        .position(point)
-                        .draggable(true)
-                        .title(address_line)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            } else if (color == 2) {
-                return (new MarkerOptions()
-                        .position(point)
-                        .draggable(true)
-                        .title(address_line)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                if (color == 0) {
+                    return (new MarkerOptions()
+                            .position(point)
+                            .draggable(true)
+                            .title(address_line)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                } else if (color == 1) {
+                    return (new MarkerOptions()
+                            .position(point)
+                            .draggable(true)
+                            .title(address_line)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                } else if (color == 2) {
+                    return (new MarkerOptions()
+                            .position(point)
+                            .draggable(true)
+                            .title(address_line)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                }
+
             }
-
+        } catch (NullPointerException e) {
+            Toast.makeText(getApplicationContext(), "Connection issue.", Toast.LENGTH_SHORT).show();
+            finish();
         }
         return null;
     }
@@ -721,6 +772,11 @@ public class MapsActivity extends FragmentActivity {
             MarkerOptions markerOptions = new MarkerOptions();
 
             // Traversing through all the routes
+
+            if(result==null){
+                Toast.makeText(getApplicationContext(), "Connection issue.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList<LatLng>();
                 lineOptions = new PolylineOptions();
@@ -779,4 +835,58 @@ public class MapsActivity extends FragmentActivity {
 
         }
     }
+
+    public void addListenerOnButton() {
+        final Context context = this;
+        plantrip = (Button) findViewById(R.id.plantrip);
+
+        plantrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                Intent intent = new Intent(context, Alarm.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private class MyLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location loc) {
+
+
+            String longitude = "Longitude: " + loc.getLongitude();
+
+            String latitude = "Latitude: " + loc.getLatitude();
+
+
+        /*------- To get city name from coordinates -------- */
+            String cityName = null;
+            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+            List<Address> addresses;
+            try {
+                addresses = gcd.getFromLocation(loc.getLatitude(),
+                        loc.getLongitude(), 1);
+                if (addresses.size() > 0) {
+                    System.out.println(addresses.get(0).getLocality());
+                    cityName = addresses.get(0).getLocality();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
+                    + cityName;
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    }
+
 }

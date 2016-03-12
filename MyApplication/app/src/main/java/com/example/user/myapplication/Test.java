@@ -14,7 +14,5 @@ public class Test extends Activity{
         setContentView(R.layout.activity_main);
 
         UCSDBus.UCSDBusStop test;
-
-        test.
     }
 }
